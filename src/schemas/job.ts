@@ -13,6 +13,7 @@ export type BudgetRange = z.infer<typeof BudgetRangeSchema>;
 
 export const RequiredSpecsSchema = z.object({
   skills: z.array(z.string()).optional(),
+  preferred_skills: z.array(z.string()).optional(),
   min_uptime: z.number().min(0).max(100).optional(),
   max_response_ms: z.number().nonnegative().optional(),
   pricing_model: z.enum(["subscription", "usage_based", "any"]).optional(),

@@ -41,13 +41,21 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Protect platform pages
-  const protectedPaths = ["/dashboard", "/agents", "/onboarding", "/interview"];
+  const protectedPaths = ["/dashboard", "/agents", "/jobs", "/onboarding", "/interview"];
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
   if (isProtected && !user) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     redirectUrl.searchParams.set("redirectedFrom", pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // /jobs/new は企業ロールのみ
+  if (pathname.startsWith("/jobs") && user && user.user_metadata?.role !== "company") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/dashboard";
+    redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }
 
