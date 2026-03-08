@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -18,33 +19,53 @@ export default async function DashboardPage() {
         fontFamily: "'Inter', -apple-system, sans-serif",
       }}
     >
-      <div style={{ marginBottom: 32 }}>
-        <p
+      <div style={{ marginBottom: 32, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+        <div>
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#3B82F6",
+              marginBottom: 8,
+            }}
+          >
+            Dashboard
+          </p>
+          <h1
+            style={{
+              fontSize: 28,
+              fontWeight: 700,
+              color: "#E2EAF4",
+              letterSpacing: "-0.02em",
+              margin: 0,
+            }}
+          >
+            ようこそ 👋
+          </h1>
+          <p style={{ color: "#7A8FA8", fontSize: 14, marginTop: 8 }}>
+            {user.email}
+          </p>
+        </div>
+        <Link
+          href="/dashboard/agents/new"
           style={{
-            fontSize: 11,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "10px 20px",
+            background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+            borderRadius: 10,
+            fontSize: 14,
             fontWeight: 600,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "#3B82F6",
-            marginBottom: 8,
+            color: "#ffffff",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
           }}
         >
-          Dashboard
-        </p>
-        <h1
-          style={{
-            fontSize: 28,
-            fontWeight: 700,
-            color: "#E2EAF4",
-            letterSpacing: "-0.02em",
-            margin: 0,
-          }}
-        >
-          ようこそ 👋
-        </h1>
-        <p style={{ color: "#7A8FA8", fontSize: 14, marginTop: 8 }}>
-          {user.email}
-        </p>
+          + 履歴書を作成
+        </Link>
       </div>
 
       <div

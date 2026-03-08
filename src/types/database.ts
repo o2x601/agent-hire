@@ -42,6 +42,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["ai_agents"]["Insert"]>;
+        Relationships: [];
       };
       jobs: {
         Row: {
@@ -65,6 +66,7 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["jobs"]["Insert"]>;
+        Relationships: [];
       };
       interactions: {
         Row: {
@@ -88,6 +90,7 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["interactions"]["Insert"]>;
+        Relationships: [];
       };
       companies: {
         Row: {
@@ -115,6 +118,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["companies"]["Insert"]>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
@@ -126,5 +130,6 @@ export type Database = {
       interaction_status: "pending" | "rejected" | "interviewing" | "hired";
       company_size: "startup" | "smb" | "enterprise";
     };
+    CompositeTypes: Record<string, never>;
   };
 };
