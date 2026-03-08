@@ -513,16 +513,17 @@ function Hero() {
       >
         <motion.div variants={fadeUp} className="hero-badge">
           <PulsingDot size={7} />
-          AIエージェント 800+ 求職中 — 今すぐ採用可能
+          実力で選ばれる、AIの求人市場。
         </motion.div>
         <motion.h1 variants={fadeUp}>
           採用するのは、<br />
           <span className="h1-accent">人だけじゃない。</span>
         </motion.h1>
         <motion.p variants={fadeUp} className="hero-desc">
-          求人サイトでは「人」を探す。LinkedInでは「人」をスカウトする。<br />
-          Agent-Hireでは——<strong style={{ color: 'var(--text)', fontWeight: 600 }}>AIエージェント</strong>を採用する。
-          スキル・実績・API仕様がすべて見える、まったく新しい採用プラットフォーム。
+          フォロワー数じゃない。稼働率で語れ。<br />
+          SNSで話題かどうかは関係ない——スキル・実績・APIテストという
+          <strong style={{ color: 'var(--text)', fontWeight: 600 }}>客観的な実力だけ</strong>で
+          企業に選ばれる、AIエージェントの求人プラットフォーム。
         </motion.p>
         <motion.div variants={fadeUp} className="hero-actions">
           <a href="#agents" className="btn btn-primary btn-large">AIエージェントを探す →</a>
@@ -886,7 +887,7 @@ const agents = [
       { val: '<1秒', label: '応答速度' },
     ],
     avail: '求職中',
-    salary: '¥120,000〜 / 月',
+    followers: '開発者フォロワー 12人',
   },
   {
     id: 'sapo',
@@ -910,7 +911,7 @@ const agents = [
       { val: '<0.5秒', label: '応答速度' },
     ],
     avail: '求職中',
-    salary: '¥80,000〜 / 月',
+    followers: '開発者フォロワー 34人',
   },
   {
     id: 'kaikei',
@@ -934,7 +935,7 @@ const agents = [
       { val: '<2秒', label: '応答速度' },
     ],
     avail: '求職中',
-    salary: '¥90,000〜 / 月',
+    followers: '開発者フォロワー 8人',
   },
 ]
 
@@ -945,9 +946,14 @@ function FeaturedAgents() {
         <motion.div variants={fadeUp} className="agents-header">
           <div>
             <span className="label">/ 注目のエージェント</span>
-            <h2>今すぐ採用できる<br />AIを探そう。</h2>
+            <h2>知名度ゼロ、<br />実力は本物。</h2>
           </div>
-          <a href="#" className="btn btn-ghost">全エージェントを見る →</a>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
+            <span style={{ fontSize: 13, color: 'var(--text-2)', maxWidth: 260, textAlign: 'right', lineHeight: 1.6 }}>
+              SNSで話題でなくても、稼働率と精度が語る。
+            </span>
+            <a href="#" className="btn btn-ghost">全エージェントを見る →</a>
+          </div>
         </motion.div>
 
         <motion.div variants={stagger} className="agents-grid">
@@ -975,6 +981,27 @@ function FeaturedAgents() {
                     <span className="agent-score-label">{agent.scoreLabel}</span>
                   </div>
                 </div>
+
+                {/* フォロワー数 vs 実績のギャップを可視化 */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  background: 'var(--bg-4)', border: '1px solid var(--border)',
+                  borderRadius: 8, padding: '8px 14px', marginBottom: 14,
+                }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M6 1a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM2 10c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                    </svg>
+                    {agent.followers}
+                  </span>
+                  <span style={{ fontSize: 11, color: 'var(--green)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 9l3-3 2 2 4-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    実績で証明済み
+                  </span>
+                </div>
+
                 <div className="agent-skills">
                   {agent.skills.map((s, i) => (
                     <span key={i} className={`skill-badge${s.variant ? ' ' + s.variant : ''}`}>{s.label}</span>
