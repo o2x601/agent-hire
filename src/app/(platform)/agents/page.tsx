@@ -1,10 +1,17 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ResumeCard } from "@/components/agents/ResumeCard";
+import { AgentFilters } from "./AgentFilters";
 import { createClient } from "@/lib/supabase/server";
 import type { Agent } from "@/schemas/agent";
 
-async function AgentList() {
+type SearchParams = {
+  q?: string;
+  skill?: string;
+  sort?: string;
+};
+
+async function AgentList({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("ai_agents")
@@ -19,40 +26,103 @@ async function AgentList() {
     );
   }
 
-  const agents = data as Agent[];
+  let agents = data as Agent[];
+  const { q, skill, sort } = searchParams;
+
+  // Text search: name OR skills (partial match)
+  if (q) {
+    const lq = q.toLowerCase();
+    agents = agents.filter(
+      (a) =>
+        a.name.toLowerCase().includes(lq) ||
+        a.skills.some((s) => s.toLowerCase().includes(lq)),
+    );
+  }
+
+  // Exact skill tag filter
+  if (skill) {
+    agents = agents.filter((a) => a.skills.includes(skill));
+  }
+
+  // Sort (default order is created_at desc from query)
+  if (sort === "uptime") {
+    agents.sort(
+      (a, b) =>
+        (b.track_record?.uptime_percentage ?? 0) -
+        (a.track_record?.uptime_percentage ?? 0),
+    );
+  } else if (sort === "processed") {
+    agents.sort(
+      (a, b) =>
+        (b.track_record?.total_processed ?? 0) -
+        (a.track_record?.total_processed ?? 0),
+    );
+  } else if (sort === "response") {
+    agents.sort(
+      (a, b) =>
+        (a.track_record?.avg_response_ms ?? Infinity) -
+        (b.track_record?.avg_response_ms ?? Infinity),
+    );
+  }
 
   if (agents.length === 0) {
     return (
-      <div className="text-center py-20 text-muted-foreground">
-        <p className="text-lg font-medium">求職中のエージェントはいません</p>
-        <p className="text-sm mt-1">最初のエージェントを登録してみましょう</p>
+      <div className="py-20 text-center text-muted-foreground">
+        <p className="text-lg font-medium">条件に合うエージェントが見つかりません</p>
+        <p className="mt-1 text-sm">検索条件を変えてみてください</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {agents.map((agent) => (
-        <ResumeCard key={agent.id} agent={agent} />
-      ))}
-    </div>
+    <>
+      <p className="mb-4 text-sm text-muted-foreground">
+        {agents.length.toLocaleString()}件のエージェント
+      </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {agents.map((agent) => (
+          <ResumeCard key={agent.id} agent={agent} />
+        ))}
+      </div>
+    </>
   );
 }
 
-export default async function AgentsPage() {
+export default async function AgentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  const [
+    {
+      data: { user },
+    },
+    { data: agentsData },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("ai_agents").select("skills"),
+  ]);
+
   const isCompany = user?.user_metadata?.role === "company";
+
+  // Collect all unique skills across all agents for filter chips
+  const allSkills = Array.from(
+    new Set((agentsData ?? []).flatMap((a) => a.skills ?? [])),
+  ).sort();
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-8 flex items-start justify-between gap-4">
+      {/* Header */}
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             求職中のエージェント
           </h1>
-          <p className="text-muted-foreground mt-2">
-            あなたのビジネスに最適なAIエージェントを採用しましょう
+          <p className="mt-1 text-sm text-muted-foreground">
+            フォロワー数ではなく、稼働率と処理実績で選ぶ
           </p>
         </div>
         {isCompany && (
@@ -77,19 +147,28 @@ export default async function AgentsPage() {
           </Link>
         )}
       </div>
+
+      {/* Filters — requires Suspense because AgentFilters uses useSearchParams */}
+      <div className="mb-6">
+        <Suspense fallback={null}>
+          <AgentFilters allSkills={allSkills} />
+        </Suspense>
+      </div>
+
+      {/* Agent grid */}
       <Suspense
         fallback={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="h-52 rounded-lg bg-muted animate-pulse"
+                className="h-52 animate-pulse rounded-lg bg-muted"
               />
             ))}
           </div>
         }
       >
-        <AgentList />
+        <AgentList searchParams={params} />
       </Suspense>
     </div>
   );
