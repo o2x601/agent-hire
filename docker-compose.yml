@@ -40,10 +40,15 @@ services:
       - "54322:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      # supabase_admin ロールを migrate.sh より先に作成
+      - ./supabase/init/00-pre-init.sh:/docker-entrypoint-initdb.d/00-pre-init.sh:ro
       # マイグレーションを DB 初回起動時に自動適用
       - ./supabase/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      # migrate.sh 後にサービスロールのパスワードを設定
+      - ./supabase/init/zz-post-init.sh:/docker-entrypoint-initdb.d/zz-post-init.sh:ro
     environment:
       <<: *postgres-env
+      POSTGRES_HOST: /var/run/postgresql
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-postgres}"]
@@ -92,6 +97,7 @@ services:
       GOTRUE_SITE_URL: ${SITE_URL:-http://localhost:3000}
       GOTRUE_URI_ALLOW_LIST: "*"
       GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
       GOTRUE_JWT_ADMIN_ROLES: service_role
       GOTRUE_JWT_AUD: authenticated
       GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
@@ -150,12 +156,14 @@ services:
       DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
       DB_ENC_KEY: supabaserealtime
       API_JWT_SECRET: ${JWT_SECRET}
+      APP_NAME: realtime
       FLY_ALLOC_ID: fly123
       FLY_APP_NAME: realtime
       SECRET_KEY_BASE: UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
       ERL_AFLAGS: -proto_dist inet_tcp
       ENABLE_TAILSCALE: "false"
       DNS_NODES: "''"
+      RLIMIT_NOFILE: ""
     depends_on:
       db:
         condition: service_healthy
