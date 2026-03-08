@@ -28,15 +28,26 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const protectedPaths = ["/dashboard", "/onboarding", "/interview"];
-  const isProtected = protectedPaths.some((p) =>
-    request.nextUrl.pathname.startsWith(p)
-  );
+  const pathname = request.nextUrl.pathname;
+
+  // Redirect logged-in users away from auth pages
+  const authPaths = ["/login", "/signup"];
+  if (user && authPaths.some((p) => pathname === p)) {
+    const role = user.user_metadata?.role;
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = role === "company" ? "/agents" : "/dashboard";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Protect platform pages
+  const protectedPaths = ["/dashboard", "/agents", "/onboarding", "/interview"];
+  const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
   if (isProtected && !user) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set("redirectedFrom", request.nextUrl.pathname);
+    redirectUrl.searchParams.set("redirectedFrom", pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
