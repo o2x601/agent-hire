@@ -1,7 +1,8 @@
 'use client'
 
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import Link from 'next/link'
 
 /* ─── CSS ─────────────────────────────────────────────────── */
 const css = `
@@ -73,6 +74,11 @@ nav {
 .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; margin-left: auto; margin-right: 28px; }
 .nav-links a { font-size: 14px; font-weight: 450; color: var(--text-2); text-decoration: none; padding: 6px 12px; border-radius: 7px; transition: color 0.15s, background 0.15s; }
 .nav-links a:hover { color: var(--text); background: var(--bg-3); }
+.nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; color: var(--text-2); font-size: 22px; line-height: 1; }
+.nav-mobile-menu { display: none; flex-direction: column; gap: 4px; padding: 12px 24px 16px; border-top: 1px solid var(--border); background: rgba(5,8,15,0.97); }
+.nav-mobile-menu a { font-size: 15px; color: var(--text-2); text-decoration: none; padding: 8px 12px; border-radius: 7px; transition: color 0.15s, background 0.15s; }
+.nav-mobile-menu a:hover { color: var(--text); background: var(--bg-3); }
+.nav-mobile-menu-open { display: flex; }
 
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
@@ -385,6 +391,8 @@ footer { border-top: 1px solid var(--border); padding: 60px 60px 48px; max-width
 @media (max-width: 1024px) {
   nav { padding: 0 24px; }
   .nav-links { display: none; }
+  .nav-hamburger { display: block; margin-left: auto; }
+  .nav-auth-desktop { display: none; }
   .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; min-height: auto; }
   .hero h1 { font-size: 44px; }
   .hero-text { padding-right: 0; }
@@ -481,23 +489,41 @@ function Section({ children, className }: { children: React.ReactNode; className
 
 /* ─── NAVBAR ────────────────────────────────────────────────── */
 function Navbar() {
+  const [open, setOpen] = useState(false)
   return (
-    <nav>
-      <a href="#" className="nav-logo">
-        <span className="nav-logo-icon">⬡</span>
-        Agent<span>Hire</span>
-      </a>
-      <ul className="nav-links">
-        <li><a href="#how">仕組み</a></li>
-        <li><a href="#agents">AIを探す</a></li>
-        <li><a href="#operators">AIを登録</a></li>
-        <li><a href="#pricing">料金</a></li>
-      </ul>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-        <a href="#" className="btn btn-ghost">ログイン</a>
-        <a href="#" className="btn btn-primary">無料で始める →</a>
+    <>
+      <nav>
+        <a href="/" className="nav-logo">
+          <span className="nav-logo-icon">⬡</span>
+          Agent<span>Hire</span>
+        </a>
+        <ul className="nav-links">
+          <li><a href="#how">仕組み</a></li>
+          <li><a href="#agents">AIを探す</a></li>
+          <li><a href="#operators">AIを登録</a></li>
+          <li><a href="#pricing">料金</a></li>
+        </ul>
+        <div className="nav-auth-desktop" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Link href="/login" className="btn btn-ghost">ログイン</Link>
+          <Link href="/signup" className="btn btn-primary">無料で始める →</Link>
+        </div>
+        <button
+          className="nav-hamburger"
+          onClick={() => setOpen((v) => !v)}
+          aria-label="メニュー"
+        >
+          {open ? '✕' : '☰'}
+        </button>
+      </nav>
+      <div className={`nav-mobile-menu${open ? ' nav-mobile-menu-open' : ''}`}>
+        <a href="#how" onClick={() => setOpen(false)}>仕組み</a>
+        <a href="#agents" onClick={() => setOpen(false)}>AIを探す</a>
+        <a href="#operators" onClick={() => setOpen(false)}>AIを登録</a>
+        <a href="#pricing" onClick={() => setOpen(false)}>料金</a>
+        <Link href="/login" onClick={() => setOpen(false)} style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 12 }}>ログイン</Link>
+        <Link href="/signup" onClick={() => setOpen(false)} className="btn btn-primary" style={{ marginTop: 4, textAlign: 'center' }}>無料で始める →</Link>
       </div>
-    </nav>
+    </>
   )
 }
 

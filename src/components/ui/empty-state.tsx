@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
   icon?: string;
@@ -21,9 +21,9 @@ export function EmptyState({ icon = "📭", title, description, action }: EmptyS
         <p className="text-sm text-muted-foreground max-w-sm">{description}</p>
       )}
       {action && (
-        <Button asChild variant="outline" className="mt-2">
-          <Link href={action.href}>{action.label}</Link>
-        </Button>
+        <Link href={action.href} className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>
+          {action.label}
+        </Link>
       )}
     </div>
   );

@@ -23,9 +23,12 @@ export default function Error({
       </p>
       <div className="flex gap-3">
         <Button onClick={reset} variant="outline">再試行する</Button>
-        <Button asChild variant="ghost">
-          <Link href="/agents">ホームに戻る</Link>
-        </Button>
+        <Link
+          href="/agents"
+          className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        >
+          ホームに戻る
+        </Link>
       </div>
     </div>
   );
