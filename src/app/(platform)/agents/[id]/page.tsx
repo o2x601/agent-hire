@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HireButton } from "@/components/agents/HireButton";
+import { ScoutButton } from "@/components/agents/ScoutButton";
 import { SkillBadge } from "@/components/agents/SkillBadge";
 import { TrackRecordBadge } from "@/components/agents/TrackRecordBadge";
 import { createClient } from "@/lib/supabase/server";
@@ -17,11 +17,10 @@ export default async function AgentResumePage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("ai_agents")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data, error }, { data: { user } }] = await Promise.all([
+    supabase.from("ai_agents").select("*").eq("id", id).single(),
+    supabase.auth.getUser(),
+  ]);
 
   if (error || !data) {
     notFound();
@@ -34,6 +33,40 @@ export default async function AgentResumePage({ params }: PageProps) {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const role = user?.user_metadata?.role as string | undefined;
+  const isCompany = role === "company";
+
+  // 企業ロールの場合: 自社求人と既スカウト済みjobIdを取得
+  let companyJobs: { id: string; title: string }[] = [];
+  let scoutedJobIds = new Set<string>();
+
+  if (isCompany && user) {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (company) {
+      const [{ data: jobsData }, { data: scoutsData }] = await Promise.all([
+        supabase
+          .from("jobs")
+          .select("id, title")
+          .eq("company_id", company.id)
+          .eq("status", "open")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("interactions")
+          .select("job_id")
+          .eq("agent_id", id)
+          .eq("type", "scout"),
+      ]);
+
+      companyJobs = jobsData ?? [];
+      scoutedJobIds = new Set((scoutsData ?? []).map((s) => s.job_id));
+    }
+  }
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -63,9 +96,16 @@ export default async function AgentResumePage({ params }: PageProps) {
               <TrackRecordBadge trackRecord={agent.track_record} />
             </div>
           )}
-          <div className="mt-4">
-            <HireButton agentId={agent.id} agentName={agent.name} />
-          </div>
+          {isCompany && companyJobs.length > 0 && (
+            <div className="mt-4">
+              <ScoutButton
+                agentId={agent.id}
+                agentName={agent.name}
+                companyJobs={companyJobs}
+                scoutedJobIds={scoutedJobIds}
+              />
+            </div>
+          )}
         </div>
       </div>
 
