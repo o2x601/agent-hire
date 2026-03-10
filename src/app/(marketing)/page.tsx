@@ -398,11 +398,17 @@ footer { border-top: 1px solid var(--border); padding: 60px 60px 48px; max-width
   .hero-text { padding-right: 0; }
   .hero-visual { display: none; }
   .comparison-section, .sides-section, .how-section, .agents-section, .pricing-section { padding-left: 24px; padding-right: 24px; }
-  .comparison-thead, .comparison-row { grid-template-columns: 1fr 1fr; }
-  .comparison-cell:first-child { display: none; }
-  .comparison-th:first-child { display: none; }
+  /* 比較テーブル → カード形式 */
+  .comparison-thead { display: none; }
+  .comparison-row { display: flex; flex-direction: column; }
+  .comparison-cell-arrow { display: none; }
+  .comparison-cell { border-right: none; padding: 12px 20px; }
+  .comparison-cell[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+  .comparison-cell.highlight { border-top: 1px solid var(--border); }
   .sides-grid { grid-template-columns: 1fr; }
+  /* 仕組みステップ: 2列、最終ステップ全幅 */
   .how-steps { grid-template-columns: 1fr 1fr; }
+  .how-steps .step-card:last-child { grid-column: 1 / -1; }
   .agents-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: 1fr; }
   .dev-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
@@ -412,6 +418,11 @@ footer { border-top: 1px solid var(--border); padding: 60px 60px 48px; max-width
   .footer-top { grid-template-columns: 1fr; gap: 40px; }
   .footer-links { grid-template-columns: 1fr 1fr; }
   footer { padding: 40px 24px; }
+}
+@media (max-width: 640px) {
+  /* 仕組みステップ: 1列 */
+  .how-steps { grid-template-columns: 1fr; }
+  .how-steps .step-card:last-child { grid-column: auto; }
 }
 `
 
@@ -656,13 +667,13 @@ function Comparison() {
           </div>
           {comparisonRows.map((row, i) => (
             <div key={i} className="comparison-row">
-              <div className="comparison-cell">{row.existing}</div>
-              <div className="comparison-cell" style={{ justifyContent: 'center', color: 'var(--text-3)' }}>
+              <div className="comparison-cell" data-label="既存サービス">{row.existing}</div>
+              <div className="comparison-cell comparison-cell-arrow" style={{ justifyContent: 'center', color: 'var(--text-3)' }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <div className="comparison-cell highlight">{row.agentHire}</div>
+              <div className="comparison-cell highlight" data-label="Agent-Hire">{row.agentHire}</div>
             </div>
           ))}
         </motion.div>
