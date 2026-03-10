@@ -37,12 +37,13 @@ const S = {
     display: "block" as const,
     fontSize: 13,
     fontWeight: 500,
-    color: "#7A8FA8",
+    color: "var(--muted-foreground)",
     marginBottom: 6,
   } as React.CSSProperties,
   hint: {
     fontSize: 11,
-    color: "#3A4D62",
+    color: "var(--muted-foreground)",
+    opacity: 0.7,
     marginLeft: 6,
   } as React.CSSProperties,
   sectionTitle: {
@@ -50,16 +51,16 @@ const S = {
     fontWeight: 700,
     letterSpacing: "0.1em",
     textTransform: "uppercase" as const,
-    color: "#3B82F6",
+    color: "var(--primary)",
     marginBottom: 4,
   } as React.CSSProperties,
   error: {
     padding: "10px 14px",
-    background: "rgba(239,68,68,0.08)",
-    border: "1px solid rgba(239,68,68,0.25)",
+    background: "color-mix(in srgb, var(--destructive) 8%, transparent)",
+    border: "1px solid color-mix(in srgb, var(--destructive) 25%, transparent)",
     borderRadius: 8,
     fontSize: 13,
-    color: "#EF4444",
+    color: "var(--destructive)",
   } as React.CSSProperties,
   textarea: {
     width: "100%",
@@ -69,15 +70,15 @@ const S = {
     outline: "none",
     resize: "vertical" as const,
     fontSize: 14,
-    color: "#E2EAF4",
+    color: "var(--foreground)",
     lineHeight: 1.6,
     padding: "10px 12px",
     boxSizing: "border-box" as const,
     fontFamily: "inherit",
   } as React.CSSProperties,
   textareaWrapper: {
-    background: "#131A25",
-    border: "1px solid #1E2A3A",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: 10,
     overflow: "hidden",
     transition: "border-color 0.15s",
@@ -85,19 +86,19 @@ const S = {
   numberInput: {
     width: "100%",
     height: 40,
-    background: "#131A25",
-    border: "1px solid #1E2A3A",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: 8,
     padding: "0 12px",
     fontSize: 14,
-    color: "#E2EAF4",
+    color: "var(--foreground)",
     outline: "none",
     boxSizing: "border-box" as const,
     fontFamily: "inherit",
   } as React.CSSProperties,
   unit: {
     fontSize: 11,
-    color: "#3A4D62",
+    color: "var(--muted-foreground)",
     marginTop: 4,
     textAlign: "right" as const,
   } as React.CSSProperties,
@@ -230,7 +231,7 @@ export default function NewAgentPage() {
       <div style={{ marginBottom: 40 }}>
         <Link
           href="/dashboard"
-          style={{ fontSize: 13, color: "#7A8FA8", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20 }}
+          style={{ fontSize: 13, color: "var(--muted-foreground)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20 }}
         >
           ← ダッシュボードに戻る
         </Link>
@@ -239,14 +240,14 @@ export default function NewAgentPage() {
           style={{
             fontSize: 28,
             fontWeight: 700,
-            color: "#E2EAF4",
+            color: "var(--foreground)",
             letterSpacing: "-0.02em",
             margin: "0 0 8px",
           }}
         >
           履歴書を作成する
         </h1>
-        <p style={{ fontSize: 14, color: "#7A8FA8" }}>
+        <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
           「誰が作ったか」ではなく「何ができるか」で評価される。実力を正直に書こう。
         </p>
       </div>
@@ -263,7 +264,7 @@ export default function NewAgentPage() {
             <div>
               <label htmlFor="name" style={S.label}>
                 エージェント名
-                <span style={{ color: "#EF4444", marginLeft: 4 }}>*</span>
+                <span style={{ color: "var(--destructive)", marginLeft: 4 }}>*</span>
               </label>
               <Input
                 id="name"
@@ -273,7 +274,7 @@ export default function NewAgentPage() {
                 required
               />
               {fieldErrors["name"] && (
-                <p style={{ fontSize: 12, color: "#EF4444", marginTop: 4 }}>
+                <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
                   {fieldErrors["name"]}
                 </p>
               )}
@@ -293,7 +294,7 @@ export default function NewAgentPage() {
                 placeholder="https://example.com/avatar.png"
               />
               {fieldErrors["avatar_url"] && (
-                <p style={{ fontSize: 12, color: "#EF4444", marginTop: 4 }}>
+                <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
                   {fieldErrors["avatar_url"]}
                 </p>
               )}
@@ -307,8 +308,8 @@ export default function NewAgentPage() {
               </label>
               <div
                 style={S.textareaWrapper}
-                onFocus={(e) => ((e.currentTarget.style.borderColor = "#3B82F6"))}
-                onBlur={(e) => ((e.currentTarget.style.borderColor = "#1E2A3A"))}
+                onFocus={(e) => ((e.currentTarget.style.borderColor = "var(--primary)"))}
+                onBlur={(e) => ((e.currentTarget.style.borderColor = "var(--border)"))}
               >
                 <textarea
                   id="personality"
@@ -319,11 +320,11 @@ export default function NewAgentPage() {
                   style={S.textarea}
                 />
               </div>
-              <p style={{ fontSize: 11, color: "#3A4D62", marginTop: 4, textAlign: "right" }}>
+              <p style={{ fontSize: 11, color: "var(--muted-foreground)", marginTop: 4, textAlign: "right" }}>
                 {personality.length} / 500
               </p>
               {fieldErrors["personality"] && (
-                <p style={{ fontSize: 12, color: "#EF4444", marginTop: 4 }}>
+                <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
                   {fieldErrors["personality"]}
                 </p>
               )}
@@ -358,12 +359,12 @@ export default function NewAgentPage() {
                       alignItems: "center",
                       gap: 6,
                       padding: "4px 10px",
-                      background: "rgba(59,130,246,0.1)",
-                      border: "1px solid rgba(59,130,246,0.28)",
+                      background: "color-mix(in srgb, var(--primary) 10%, transparent)",
+                      border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
                       borderRadius: 99,
                       fontSize: 12,
                       fontWeight: 500,
-                      color: "#3B82F6",
+                      color: "var(--primary)",
                     }}
                   >
                     {skill}
@@ -373,7 +374,7 @@ export default function NewAgentPage() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#3B82F6",
+                        color: "var(--primary)",
                         cursor: "pointer",
                         padding: 0,
                         lineHeight: 1,
@@ -408,7 +409,7 @@ export default function NewAgentPage() {
                 追加
               </Button>
             </div>
-            <p style={{ fontSize: 11, color: "#3A4D62", marginTop: 6 }}>
+            <p style={{ fontSize: 11, color: "var(--muted-foreground)", marginTop: 6 }}>
               {skills.length} / 20 スキル
             </p>
           </CardContent>
@@ -446,13 +447,13 @@ export default function NewAgentPage() {
                     onChange={(e) => setUptime(e.target.value)}
                     placeholder="99.9"
                     style={S.numberInput}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                   />
                 </div>
                 <p style={S.unit}>%</p>
                 {fieldErrors["track_record.uptime_percentage"] && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginTop: 2 }}>
+                  <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 2 }}>
                     {fieldErrors["track_record.uptime_percentage"]}
                   </p>
                 )}
@@ -472,12 +473,12 @@ export default function NewAgentPage() {
                   onChange={(e) => setTotalProcessed(e.target.value)}
                   placeholder="1000000"
                   style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                 />
                 <p style={S.unit}>件</p>
                 {fieldErrors["track_record.total_processed"] && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginTop: 2 }}>
+                  <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 2 }}>
                     {fieldErrors["track_record.total_processed"]}
                   </p>
                 )}
@@ -497,12 +498,12 @@ export default function NewAgentPage() {
                   onChange={(e) => setAvgResponseMs(e.target.value)}
                   placeholder="320"
                   style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                 />
                 <p style={S.unit}>ms</p>
                 {fieldErrors["track_record.avg_response_ms"] && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginTop: 2 }}>
+                  <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 2 }}>
                     {fieldErrors["track_record.avg_response_ms"]}
                   </p>
                 )}
@@ -523,19 +524,19 @@ export default function NewAgentPage() {
                   onChange={(e) => setErrorRate(e.target.value)}
                   placeholder="0.1"
                   style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                 />
                 <p style={S.unit}>%</p>
                 {fieldErrors["track_record.error_rate"] && (
-                  <p style={{ fontSize: 12, color: "#EF4444", marginTop: 2 }}>
+                  <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 2 }}>
                     {fieldErrors["track_record.error_rate"]}
                   </p>
                 )}
               </div>
             </div>
 
-            <p style={{ fontSize: 11, color: "#3A4D62", marginTop: 16 }}>
+            <p style={{ fontSize: 11, color: "var(--muted-foreground)", marginTop: 16 }}>
               ※ 実績データはすべて任意です。いずれかを入力した場合、全フィールドが検証されます。
             </p>
           </CardContent>
@@ -559,10 +560,12 @@ export default function NewAgentPage() {
                     style={{
                       flex: 1,
                       padding: "16px 20px",
-                      background: selected ? "rgba(59,130,246,0.1)" : "#131A25",
+                      background: selected
+                        ? "color-mix(in srgb, var(--primary) 10%, transparent)"
+                        : "var(--card)",
                       border: selected
-                        ? "1px solid rgba(59,130,246,0.5)"
-                        : "1px solid #1E2A3A",
+                        ? "1px solid color-mix(in srgb, var(--primary) 50%, transparent)"
+                        : "1px solid var(--border)",
                       borderRadius: 12,
                       cursor: "pointer",
                       textAlign: "left",
@@ -574,13 +577,13 @@ export default function NewAgentPage() {
                       style={{
                         fontSize: 14,
                         fontWeight: 600,
-                        color: selected ? "#3B82F6" : "#E2EAF4",
+                        color: selected ? "var(--primary)" : "var(--foreground)",
                         marginBottom: 4,
                       }}
                     >
                       {opt.label}
                     </div>
-                    <div style={{ fontSize: 12, color: "#7A8FA8" }}>{opt.sub}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>{opt.sub}</div>
                   </button>
                 );
               })}
@@ -604,11 +607,11 @@ export default function NewAgentPage() {
               placeholder="https://api.your-agent.com/v1"
             />
             {fieldErrors["api_endpoint"] && (
-              <p style={{ fontSize: 12, color: "#EF4444", marginTop: 6 }}>
+              <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 6 }}>
                 {fieldErrors["api_endpoint"]}
               </p>
             )}
-            <p style={{ fontSize: 11, color: "#3A4D62", marginTop: 6 }}>
+            <p style={{ fontSize: 11, color: "var(--muted-foreground)", marginTop: 6 }}>
               ※ 後から追加・変更できます
             </p>
           </CardContent>

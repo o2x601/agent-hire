@@ -68,18 +68,18 @@ export default function SignupPage() {
       <div style={{ width: "100%", maxWidth: 420, padding: "0 16px", textAlign: "center" }}>
         <div
           style={{
-            background: "#0C1019",
-            border: "1px solid #1E2A3A",
+            background: "var(--card)",
+            border: "1px solid var(--border)",
             borderRadius: 16,
             padding: 40,
           }}
         >
           <div style={{ fontSize: 48, marginBottom: 16 }}>📬</div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#E2EAF4", marginBottom: 12 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--foreground)", marginBottom: 12 }}>
             確認メールを送信しました
           </h2>
-          <p style={{ fontSize: 14, color: "#7A8FA8", lineHeight: 1.7 }}>
-            <strong style={{ color: "#E2EAF4" }}>{email}</strong> に確認リンクを送りました。
+          <p style={{ fontSize: 14, color: "var(--muted-foreground)", lineHeight: 1.7 }}>
+            <strong style={{ color: "var(--foreground)" }}>{email}</strong> に確認リンクを送りました。
             <br />
             メール内のリンクをクリックして登録を完了してください。
           </p>
@@ -89,11 +89,11 @@ export default function SignupPage() {
               display: "inline-block",
               marginTop: 24,
               padding: "10px 24px",
-              background: "#131A25",
-              border: "1px solid #1E2A3A",
+              background: "var(--card)",
+              border: "1px solid var(--border)",
               borderRadius: 8,
               fontSize: 13,
-              color: "#7A8FA8",
+              color: "var(--muted-foreground)",
               textDecoration: "none",
             }}
           >
@@ -120,7 +120,7 @@ export default function SignupPage() {
             style={{
               width: 32,
               height: 32,
-              background: "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)",
+              background: "linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)",
               borderRadius: 8,
             }}
           />
@@ -128,14 +128,14 @@ export default function SignupPage() {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              color: "#E2EAF4",
+              color: "var(--foreground)",
               letterSpacing: "-0.02em",
             }}
           >
             Agent-Hire
           </span>
         </div>
-        <p style={{ fontSize: 14, color: "#7A8FA8" }}>
+        <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
           {step === "role" ? "ご利用目的を選択してください" : "アカウント情報を入力"}
         </p>
       </div>
@@ -148,8 +148,8 @@ export default function SignupPage() {
               key={r.value}
               onClick={() => selectRole(r.value)}
               style={{
-                background: "#0C1019",
-                border: "1px solid #1E2A3A",
+                background: "var(--card)",
+                border: "1px solid var(--border)",
                 borderRadius: 16,
                 padding: "24px 28px",
                 textAlign: "left",
@@ -160,30 +160,28 @@ export default function SignupPage() {
                 gap: 20,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#3B82F6";
-                e.currentTarget.style.background = "#0F1620";
+                e.currentTarget.style.borderColor = "var(--primary)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#1E2A3A";
-                e.currentTarget.style.background = "#0C1019";
+                e.currentTarget.style.borderColor = "var(--border)";
               }}
             >
               <span style={{ fontSize: 36 }}>{r.icon}</span>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#E2EAF4", marginBottom: 4 }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", marginBottom: 4 }}>
                   {r.label}
                 </div>
-                <div style={{ fontSize: 13, color: "#7A8FA8", lineHeight: 1.5 }}>
+                <div style={{ fontSize: 13, color: "var(--muted-foreground)", lineHeight: 1.5 }}>
                   {r.sub}
                 </div>
               </div>
-              <div style={{ marginLeft: "auto", color: "#3A4D62", fontSize: 18 }}>→</div>
+              <div style={{ marginLeft: "auto", color: "var(--muted-foreground)", fontSize: 18 }}>→</div>
             </button>
           ))}
 
-          <p style={{ textAlign: "center", marginTop: 8, fontSize: 13, color: "#7A8FA8" }}>
+          <p style={{ textAlign: "center", marginTop: 8, fontSize: 13, color: "var(--muted-foreground)" }}>
             すでにアカウントをお持ちの方は{" "}
-            <Link href="/login" style={{ color: "#3B82F6", textDecoration: "none", fontWeight: 500 }}>
+            <Link href="/login" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 500 }}>
               ログイン
             </Link>
           </p>
@@ -201,12 +199,12 @@ export default function SignupPage() {
                 alignItems: "center",
                 gap: 8,
                 padding: "6px 14px",
-                background: "rgba(59,130,246,0.1)",
-                border: "1px solid rgba(59,130,246,0.28)",
+                background: "color-mix(in srgb, var(--primary) 10%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
                 borderRadius: 99,
                 fontSize: 12,
                 fontWeight: 600,
-                color: "#3B82F6",
+                color: "var(--primary)",
               }}
             >
               {roles.find((r) => r.value === role)?.icon}{" "}
@@ -216,7 +214,7 @@ export default function SignupPage() {
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#7A8FA8",
+                  color: "var(--muted-foreground)",
                   cursor: "pointer",
                   fontSize: 12,
                   padding: 0,
@@ -230,8 +228,8 @@ export default function SignupPage() {
 
           <div
             style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
+              background: "var(--card)",
+              border: "1px solid var(--border)",
               borderRadius: 16,
               padding: 32,
             }}
@@ -241,7 +239,7 @@ export default function SignupPage() {
               <div>
                 <label
                   htmlFor="email"
-                  style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#7A8FA8", marginBottom: 8 }}
+                  style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--muted-foreground)", marginBottom: 8 }}
                 >
                   メールアドレス
                 </label>
@@ -255,18 +253,18 @@ export default function SignupPage() {
                   style={{
                     width: "100%",
                     height: 44,
-                    background: "#131A25",
-                    border: "1px solid #1E2A3A",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 10,
                     padding: "0 14px",
                     fontSize: 14,
-                    color: "#E2EAF4",
+                    color: "var(--foreground)",
                     outline: "none",
                     boxSizing: "border-box",
                     transition: "border-color 0.15s",
                   }}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                 />
               </div>
 
@@ -274,10 +272,10 @@ export default function SignupPage() {
               <div>
                 <label
                   htmlFor="password"
-                  style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#7A8FA8", marginBottom: 8 }}
+                  style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--muted-foreground)", marginBottom: 8 }}
                 >
                   パスワード
-                  <span style={{ marginLeft: 8, fontSize: 11, color: "#3A4D62" }}>（8文字以上）</span>
+                  <span style={{ marginLeft: 8, fontSize: 11, color: "var(--muted-foreground)", opacity: 0.7 }}>（8文字以上）</span>
                 </label>
                 <input
                   id="password"
@@ -290,18 +288,18 @@ export default function SignupPage() {
                   style={{
                     width: "100%",
                     height: 44,
-                    background: "#131A25",
-                    border: "1px solid #1E2A3A",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 10,
                     padding: "0 14px",
                     fontSize: 14,
-                    color: "#E2EAF4",
+                    color: "var(--foreground)",
                     outline: "none",
                     boxSizing: "border-box",
                     transition: "border-color 0.15s",
                   }}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                 />
               </div>
 
@@ -310,11 +308,11 @@ export default function SignupPage() {
                 <div
                   style={{
                     padding: "10px 14px",
-                    background: "rgba(239,68,68,0.1)",
-                    border: "1px solid rgba(239,68,68,0.25)",
+                    background: "color-mix(in srgb, var(--destructive) 10%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--destructive) 25%, transparent)",
                     borderRadius: 8,
                     fontSize: 13,
-                    color: "#EF4444",
+                    color: "var(--destructive)",
                   }}
                 >
                   {error}
@@ -328,13 +326,13 @@ export default function SignupPage() {
                 style={{
                   height: 44,
                   background: loading
-                    ? "#1B2333"
-                    : "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+                    ? "var(--muted)"
+                    : "linear-gradient(135deg, var(--primary) 0%, #2563EB 100%)",
                   border: "none",
                   borderRadius: 10,
                   fontSize: 14,
                   fontWeight: 600,
-                  color: loading ? "#7A8FA8" : "#ffffff",
+                  color: loading ? "var(--muted-foreground)" : "#ffffff",
                   cursor: loading ? "not-allowed" : "pointer",
                   transition: "opacity 0.15s",
                 }}
@@ -344,9 +342,9 @@ export default function SignupPage() {
             </form>
           </div>
 
-          <p style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#7A8FA8" }}>
+          <p style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "var(--muted-foreground)" }}>
             すでにアカウントをお持ちの方は{" "}
-            <Link href="/login" style={{ color: "#3B82F6", textDecoration: "none", fontWeight: 500 }}>
+            <Link href="/login" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 500 }}>
               ログイン
             </Link>
           </p>

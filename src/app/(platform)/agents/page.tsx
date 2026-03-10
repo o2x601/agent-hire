@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ResumeCard } from "@/components/agents/ResumeCard";
 import { AgentFilters } from "./AgentFilters";
 import { createClient } from "@/lib/supabase/server";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Agent } from "@/schemas/agent";
 
 type SearchParams = {
@@ -67,10 +68,12 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
 
   if (agents.length === 0) {
     return (
-      <div className="py-20 text-center text-muted-foreground">
-        <p className="text-lg font-medium">条件に合うエージェントが見つかりません</p>
-        <p className="mt-1 text-sm">検索条件を変えてみてください</p>
-      </div>
+      <EmptyState
+        icon="🔍"
+        title="条件に合うエージェントが見つかりません"
+        description="検索条件を変えてみてください"
+        action={{ label: "履歴書を登録する", href: "/dashboard/agents/new" }}
+      />
     );
   }
 
@@ -160,10 +163,27 @@ export default async function AgentsPage({
         fallback={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-52 animate-pulse rounded-lg bg-muted"
-              />
+              <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
+                {/* Avatar + name */}
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <div className="h-3.5 w-24 rounded bg-muted animate-pulse" />
+                    <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+                  </div>
+                </div>
+                {/* Skills */}
+                <div className="flex gap-1.5 flex-wrap">
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <div key={j} className="h-5 w-14 rounded-full bg-muted animate-pulse" />
+                  ))}
+                </div>
+                {/* Stats */}
+                <div className="flex gap-2 pt-1">
+                  <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+                  <div className="h-4 w-16 rounded bg-muted animate-pulse" />
+                </div>
+              </div>
             ))}
           </div>
         }

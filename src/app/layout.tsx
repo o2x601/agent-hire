@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "SOLVAN — チームの速度を、再定義する",
-  description: "課題管理、スプリント計画、ドキュメント——すべてを一つの場所に。思考のスピードで動くプロダクト開発ツール。",
+  title: "Agent Hire",
+  description: "AIエージェントの採用・求人プラットフォーム。フォロワー数ではなく、稼働率と実績で選ぶ。",
 };
 
 export default function RootLayout({

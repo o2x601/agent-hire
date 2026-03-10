@@ -35,7 +35,7 @@ export async function updateSession(request: NextRequest) {
   if (user && authPaths.some((p) => pathname === p)) {
     const role = user.user_metadata?.role;
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = role === "company" ? "/agents" : "/dashboard";
+    redirectUrl.pathname = role === "company" ? "/dashboard/company" : "/dashboard";
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }
@@ -51,7 +51,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // /jobs/new は企業ロールのみ
+  // /dashboard/company は企業ロールのみ
+  if (pathname.startsWith("/dashboard/company") && user && user.user_metadata?.role !== "company") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/dashboard";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // /jobs は企業ロールのみ
   if (pathname.startsWith("/jobs") && user && user.user_metadata?.role !== "company") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/dashboard";

@@ -49,7 +49,7 @@ export default function LoginPage() {
             style={{
               width: 32,
               height: 32,
-              background: "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)",
+              background: "linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)",
               borderRadius: 8,
             }}
           />
@@ -57,14 +57,14 @@ export default function LoginPage() {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              color: "#E2EAF4",
+              color: "var(--foreground)",
               letterSpacing: "-0.02em",
             }}
           >
             Agent-Hire
           </span>
         </div>
-        <p style={{ fontSize: 14, color: "#7A8FA8" }}>
+        <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
           アカウントにログイン
         </p>
       </div>
@@ -72,8 +72,8 @@ export default function LoginPage() {
       {/* Card */}
       <div
         style={{
-          background: "#0C1019",
-          border: "1px solid #1E2A3A",
+          background: "var(--card)",
+          border: "1px solid var(--border)",
           borderRadius: 16,
           padding: 32,
         }}
@@ -83,7 +83,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="email"
-              style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#7A8FA8", marginBottom: 8 }}
+              style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--muted-foreground)", marginBottom: 8 }}
             >
               メールアドレス
             </label>
@@ -97,18 +97,18 @@ export default function LoginPage() {
               style={{
                 width: "100%",
                 height: 44,
-                background: "#131A25",
-                border: "1px solid #1E2A3A",
+                background: "var(--card)",
+                border: "1px solid var(--border)",
                 borderRadius: 10,
                 padding: "0 14px",
                 fontSize: 14,
-                color: "#E2EAF4",
+                color: "var(--foreground)",
                 outline: "none",
                 boxSizing: "border-box",
                 transition: "border-color 0.15s",
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
             />
           </div>
 
@@ -116,7 +116,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#7A8FA8", marginBottom: 8 }}
+              style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--muted-foreground)", marginBottom: 8 }}
             >
               パスワード
             </label>
@@ -130,18 +130,18 @@ export default function LoginPage() {
               style={{
                 width: "100%",
                 height: 44,
-                background: "#131A25",
-                border: "1px solid #1E2A3A",
+                background: "var(--card)",
+                border: "1px solid var(--border)",
                 borderRadius: 10,
                 padding: "0 14px",
                 fontSize: 14,
-                color: "#E2EAF4",
+                color: "var(--foreground)",
                 outline: "none",
                 boxSizing: "border-box",
                 transition: "border-color 0.15s",
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
             />
           </div>
 
@@ -150,11 +150,11 @@ export default function LoginPage() {
             <div
               style={{
                 padding: "10px 14px",
-                background: "rgba(239,68,68,0.1)",
-                border: "1px solid rgba(239,68,68,0.25)",
+                background: "color-mix(in srgb, var(--destructive) 10%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--destructive) 25%, transparent)",
                 borderRadius: 8,
                 fontSize: 13,
-                color: "#EF4444",
+                color: "var(--destructive)",
               }}
             >
               {error}
@@ -167,31 +167,58 @@ export default function LoginPage() {
             disabled={loading}
             style={{
               height: 44,
-              background: loading ? "#1B2333" : "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+              background: loading
+                ? "var(--muted)"
+                : "linear-gradient(135deg, var(--primary) 0%, #2563EB 100%)",
               border: "none",
               borderRadius: 10,
               fontSize: 14,
               fontWeight: 600,
-              color: loading ? "#7A8FA8" : "#ffffff",
+              color: loading ? "var(--muted-foreground)" : "#ffffff",
               cursor: loading ? "not-allowed" : "pointer",
               transition: "opacity 0.15s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
             }}
           >
-            {loading ? "ログイン中..." : "ログイン"}
+            {loading ? (
+              <>
+                <span
+                  style={{
+                    width: 16,
+                    height: 16,
+                    border: "2px solid var(--muted-foreground)",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    animation: "spin 0.75s linear infinite",
+                  }}
+                />
+                ログイン中...
+              </>
+            ) : "ログイン"}
           </button>
         </form>
       </div>
 
       {/* Footer */}
-      <p style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#7A8FA8" }}>
+      <p style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "var(--muted-foreground)" }}>
         アカウントをお持ちでない方は{" "}
         <Link
           href="/signup"
-          style={{ color: "#3B82F6", textDecoration: "none", fontWeight: 500 }}
+          style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 500 }}
         >
           新規登録
         </Link>
       </p>
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

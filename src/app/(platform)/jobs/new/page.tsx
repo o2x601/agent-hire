@@ -21,12 +21,13 @@ const S = {
     display: "block" as const,
     fontSize: 13,
     fontWeight: 500,
-    color: "#7A8FA8",
+    color: "var(--muted-foreground)",
     marginBottom: 6,
   } as React.CSSProperties,
   hint: {
     fontSize: 11,
-    color: "#3A4D62",
+    color: "var(--muted-foreground)",
+    opacity: 0.7,
     marginLeft: 6,
   } as React.CSSProperties,
   sectionLabel: {
@@ -34,25 +35,25 @@ const S = {
     fontWeight: 700,
     letterSpacing: "0.1em",
     textTransform: "uppercase" as const,
-    color: "#3B82F6",
+    color: "var(--primary)",
     marginBottom: 4,
   } as React.CSSProperties,
   error: {
     padding: "10px 14px",
-    background: "rgba(239,68,68,0.08)",
-    border: "1px solid rgba(239,68,68,0.25)",
+    background: "color-mix(in srgb, var(--destructive) 8%, transparent)",
+    border: "1px solid color-mix(in srgb, var(--destructive) 25%, transparent)",
     borderRadius: 8,
     fontSize: 13,
-    color: "#EF4444",
+    color: "var(--destructive)",
   } as React.CSSProperties,
   fieldError: {
     fontSize: 12,
-    color: "#EF4444",
+    color: "var(--destructive)",
     marginTop: 4,
   } as React.CSSProperties,
   textareaWrapper: {
-    background: "#131A25",
-    border: "1px solid #1E2A3A",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: 10,
     overflow: "hidden",
     transition: "border-color 0.15s",
@@ -65,7 +66,7 @@ const S = {
     outline: "none",
     resize: "vertical" as const,
     fontSize: 14,
-    color: "#E2EAF4",
+    color: "var(--foreground)",
     lineHeight: 1.6,
     padding: "10px 12px",
     boxSizing: "border-box" as const,
@@ -74,12 +75,12 @@ const S = {
   numberInput: {
     flex: 1,
     height: 40,
-    background: "#131A25",
-    border: "1px solid #1E2A3A",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: 8,
     padding: "0 12px",
     fontSize: 14,
-    color: "#E2EAF4",
+    color: "var(--foreground)",
     outline: "none",
     boxSizing: "border-box" as const,
     fontFamily: "inherit",
@@ -92,9 +93,9 @@ function TagInput({
   onAdd,
   onRemove,
   placeholder,
-  color = "#3B82F6",
-  colorDim = "rgba(59,130,246,0.1)",
-  colorBorder = "rgba(59,130,246,0.28)",
+  color = "var(--primary)",
+  colorDim = "color-mix(in srgb, var(--primary) 10%, transparent)",
+  colorBorder = "color-mix(in srgb, var(--primary) 28%, transparent)",
 }: {
   tags: string[];
   onAdd: (tag: string) => void;
@@ -183,7 +184,7 @@ function TagInput({
           追加
         </Button>
       </div>
-      <p style={{ fontSize: 11, color: "#3A4D62", marginTop: 6 }}>
+      <p style={{ fontSize: 11, color: "var(--muted-foreground)", marginTop: 6 }}>
         {tags.length} / 20 スキル
       </p>
     </div>
@@ -316,7 +317,7 @@ export default function NewJobPage() {
           href="/agents"
           style={{
             fontSize: 13,
-            color: "#7A8FA8",
+            color: "var(--muted-foreground)",
             textDecoration: "none",
             display: "inline-flex",
             alignItems: "center",
@@ -331,14 +332,14 @@ export default function NewJobPage() {
           style={{
             fontSize: 28,
             fontWeight: 700,
-            color: "#E2EAF4",
+            color: "var(--foreground)",
             letterSpacing: "-0.02em",
             margin: "0 0 8px",
           }}
         >
           求人票を投稿する
         </h1>
-        <p style={{ fontSize: 14, color: "#7A8FA8" }}>
+        <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
           「何ができるAIが欲しいか」を具体的に書くほど、最適なエージェントとマッチしやすくなります。
         </p>
       </div>
@@ -356,7 +357,7 @@ export default function NewJobPage() {
             <div>
               <label htmlFor="title" style={S.label}>
                 募集タイトル
-                <span style={{ color: "#EF4444", marginLeft: 4 }}>*</span>
+                <span style={{ color: "var(--destructive)", marginLeft: 4 }}>*</span>
               </label>
               <Input
                 id="title"
@@ -379,7 +380,7 @@ export default function NewJobPage() {
                 ) : (
                   <span />
                 )}
-                <p style={{ fontSize: 11, color: "#3A4D62" }}>{title.length} / 200</p>
+                <p style={{ fontSize: 11, color: "var(--muted-foreground)" }}>{title.length} / 200</p>
               </div>
             </div>
 
@@ -387,12 +388,12 @@ export default function NewJobPage() {
             <div>
               <label htmlFor="problem" style={S.label}>
                 解決したい課題
-                <span style={{ color: "#EF4444", marginLeft: 4 }}>*</span>
+                <span style={{ color: "var(--destructive)", marginLeft: 4 }}>*</span>
               </label>
               <div
                 style={S.textareaWrapper}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
               >
                 <textarea
                   id="problem"
@@ -417,7 +418,7 @@ export default function NewJobPage() {
                 ) : (
                   <span />
                 )}
-                <p style={{ fontSize: 11, color: "#3A4D62" }}>
+                <p style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
                   {problemStatement.length} / 5000
                 </p>
               </div>
@@ -446,7 +447,7 @@ export default function NewJobPage() {
                       top: "50%",
                       transform: "translateY(-50%)",
                       fontSize: 13,
-                      color: "#7A8FA8",
+                      color: "var(--muted-foreground)",
                     }}
                   >
                     ¥
@@ -459,13 +460,13 @@ export default function NewJobPage() {
                     onChange={(e) => setBudgetMin(e.target.value)}
                     placeholder="50,000"
                     style={{ ...S.numberInput, paddingLeft: 28 }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                   />
                 </div>
               </div>
 
-              <span style={{ color: "#3A4D62", fontSize: 18, marginTop: 20, flexShrink: 0 }}>〜</span>
+              <span style={{ color: "var(--muted-foreground)", fontSize: 18, marginTop: 20, flexShrink: 0 }}>〜</span>
 
               <div style={{ flex: 1 }}>
                 <label style={{ ...S.label, marginBottom: 4 }}>上限</label>
@@ -477,7 +478,7 @@ export default function NewJobPage() {
                       top: "50%",
                       transform: "translateY(-50%)",
                       fontSize: 13,
-                      color: "#7A8FA8",
+                      color: "var(--muted-foreground)",
                     }}
                   >
                     ¥
@@ -490,8 +491,8 @@ export default function NewJobPage() {
                     onChange={(e) => setBudgetMax(e.target.value)}
                     placeholder="200,000"
                     style={{ ...S.numberInput, paddingLeft: 28 }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "#1E2A3A")}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
                   />
                 </div>
               </div>
@@ -526,12 +527,12 @@ export default function NewJobPage() {
                 <span
                   style={{
                     padding: "2px 10px",
-                    background: "rgba(239,68,68,0.1)",
-                    border: "1px solid rgba(239,68,68,0.25)",
+                    background: "color-mix(in srgb, var(--destructive) 10%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--destructive) 25%, transparent)",
                     borderRadius: 99,
                     fontSize: 11,
                     fontWeight: 600,
-                    color: "#EF4444",
+                    color: "var(--destructive)",
                   }}
                 >
                   必須
@@ -543,14 +544,14 @@ export default function NewJobPage() {
                 onAdd={(s) => setRequiredSkills((p) => [...p, s])}
                 onRemove={(s) => setRequiredSkills((p) => p.filter((x) => x !== s))}
                 placeholder="例: 自然言語処理, REST API, 日本語対応..."
-                color="#EF4444"
-                colorDim="rgba(239,68,68,0.08)"
-                colorBorder="rgba(239,68,68,0.25)"
+                color="var(--destructive)"
+                colorDim="color-mix(in srgb, var(--destructive) 8%, transparent)"
+                colorBorder="color-mix(in srgb, var(--destructive) 25%, transparent)"
               />
             </div>
 
             {/* 区切り線 */}
-            <div style={{ borderTop: "1px solid #1E2A3A" }} />
+            <div style={{ borderTop: "1px solid var(--border)" }} />
 
             {/* あると嬉しいスキル */}
             <div>

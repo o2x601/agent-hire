@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ScoutResponseButton } from "@/components/dashboard/ScoutResponseButton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type ScoutRow = {
   id: string;
@@ -97,7 +98,7 @@ export default async function DashboardPage() {
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#3B82F6",
+              color: "var(--primary)",
               marginBottom: 8,
             }}
           >
@@ -107,14 +108,14 @@ export default async function DashboardPage() {
             style={{
               fontSize: 28,
               fontWeight: 700,
-              color: "#E2EAF4",
+              color: "var(--foreground)",
               letterSpacing: "-0.02em",
               margin: 0,
             }}
           >
             ようこそ 👋
           </h1>
-          <p style={{ color: "#7A8FA8", fontSize: 14, marginTop: 8 }}>
+          <p style={{ color: "var(--muted-foreground)", fontSize: 14, marginTop: 8 }}>
             {user.email}
           </p>
         </div>
@@ -125,7 +126,7 @@ export default async function DashboardPage() {
             alignItems: "center",
             gap: 6,
             padding: "10px 20px",
-            background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+            background: "linear-gradient(135deg, var(--primary) 0%, #2563EB 100%)",
             borderRadius: 10,
             fontSize: 14,
             fontWeight: 600,
@@ -156,8 +157,8 @@ export default async function DashboardPage() {
           <div
             key={stat.label}
             style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
+              background: "var(--card)",
+              border: "1px solid var(--border)",
               borderRadius: 12,
               padding: 24,
             }}
@@ -167,13 +168,13 @@ export default async function DashboardPage() {
               style={{
                 fontSize: 32,
                 fontWeight: 700,
-                color: "#E2EAF4",
+                color: "var(--foreground)",
                 letterSpacing: "-0.02em",
               }}
             >
               {stat.value}
             </div>
-            <div style={{ fontSize: 13, color: "#7A8FA8", marginTop: 4 }}>
+            <div style={{ fontSize: 13, color: "var(--muted-foreground)", marginTop: 4 }}>
               {stat.label}
             </div>
           </div>
@@ -187,7 +188,7 @@ export default async function DashboardPage() {
             style={{
               fontSize: 18,
               fontWeight: 700,
-              color: "#E2EAF4",
+              color: "var(--foreground)",
               marginBottom: 16,
             }}
           >
@@ -197,7 +198,7 @@ export default async function DashboardPage() {
           {/* 未対応スカウト */}
           {pendingScouts.length > 0 && (
             <div style={{ marginBottom: 32 }}>
-              <p style={{ fontSize: 12, color: "#3B82F6", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              <p style={{ fontSize: 12, color: "var(--primary)", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                 返答待ち
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -207,8 +208,8 @@ export default async function DashboardPage() {
                     <div
                       key={scout.id}
                       style={{
-                        background: "#0C1019",
-                        border: "1px solid #1E3A5F",
+                        background: "var(--card)",
+                        border: "1px solid var(--border)",
                         borderRadius: 12,
                         padding: 20,
                         display: "flex",
@@ -219,23 +220,23 @@ export default async function DashboardPage() {
                     >
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 14, fontWeight: 600, color: "#E2EAF4" }}>
+                          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>
                             {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
                           </span>
-                          <span style={{ fontSize: 12, color: "#7A8FA8" }}>←</span>
-                          <span style={{ fontSize: 13, color: "#7A8FA8" }}>
+                          <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>←</span>
+                          <span style={{ fontSize: 13, color: "var(--muted-foreground)" }}>
                             {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
                           </span>
                         </div>
-                        <p style={{ fontSize: 13, color: "#3B82F6", marginBottom: 6 }}>
+                        <p style={{ fontSize: 13, color: "var(--primary)", marginBottom: 6 }}>
                           求人: {scoutJobMap.get(scout.job_id) ?? "不明な求人"}
                         </p>
                         {message && (
-                          <p style={{ fontSize: 13, color: "#7A8FA8", lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                          <p style={{ fontSize: 13, color: "var(--muted-foreground)", lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
                             {message}
                           </p>
                         )}
-                        <p style={{ fontSize: 11, color: "#4A5A6A", marginTop: 6 }}>
+                        <p style={{ fontSize: 11, color: "var(--muted-foreground)", opacity: 0.6, marginTop: 6 }}>
                           {new Date(scout.created_at).toLocaleDateString("ja-JP")}
                         </p>
                       </div>
@@ -252,7 +253,7 @@ export default async function DashboardPage() {
           {/* 対応済みスカウト */}
           {pastScouts.length > 0 && (
             <div>
-              <p style={{ fontSize: 12, color: "#7A8FA8", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              <p style={{ fontSize: 12, color: "var(--muted-foreground)", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                 対応済み
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -268,14 +269,14 @@ export default async function DashboardPage() {
                   const statusColor =
                     scout.status === "interviewing" || scout.status === "hired"
                       ? "#22c55e"
-                      : "#ef4444";
+                      : "var(--destructive)";
 
                   return (
                     <div
                       key={scout.id}
                       style={{
-                        background: "#0C1019",
-                        border: "1px solid #1E2A3A",
+                        background: "var(--card)",
+                        border: "1px solid var(--border)",
                         borderRadius: 12,
                         padding: 16,
                         display: "flex",
@@ -287,15 +288,15 @@ export default async function DashboardPage() {
                     >
                       <div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "#E2EAF4" }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>
                             {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
                           </span>
-                          <span style={{ fontSize: 11, color: "#7A8FA8" }}>←</span>
-                          <span style={{ fontSize: 12, color: "#7A8FA8" }}>
+                          <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>←</span>
+                          <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
                             {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
                           </span>
                         </div>
-                        <p style={{ fontSize: 12, color: "#4A5A6A", marginTop: 2 }}>
+                        <p style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>
                           {scoutJobMap.get(scout.job_id) ?? "不明な求人"} ·{" "}
                           {new Date(scout.created_at).toLocaleDateString("ja-JP")}
                         </p>
@@ -313,22 +314,11 @@ export default async function DashboardPage() {
       )}
 
       {scouts.length === 0 && agents.length > 0 && (
-        <div
-          style={{
-            background: "#0C1019",
-            border: "1px solid #1E2A3A",
-            borderRadius: 12,
-            padding: 32,
-            textAlign: "center",
-            color: "#7A8FA8",
-          }}
-        >
-          <p style={{ fontSize: 20, marginBottom: 8 }}>📨</p>
-          <p style={{ fontSize: 14 }}>まだスカウトが届いていません</p>
-          <p style={{ fontSize: 12, marginTop: 4 }}>
-            エージェントの実績を充実させてスカウトを待ちましょう
-          </p>
-        </div>
+        <EmptyState
+          icon="📨"
+          title="まだスカウトが届いていません"
+          description="エージェントの実績を充実させてスカウトを待ちましょう"
+        />
       )}
     </div>
   );

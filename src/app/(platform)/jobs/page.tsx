@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { JobCard } from "@/components/jobs/JobCard";
 import { JobFilters } from "@/components/jobs/JobFilters";
 import { RequiredSpecsSchema } from "@/schemas/job";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Database } from "@/types/database";
 
 type JobRow = Database["public"]["Tables"]["jobs"]["Row"];
@@ -106,10 +107,12 @@ async function JobList({
 
   if (filtered.length === 0) {
     return (
-      <div className="py-20 text-center text-muted-foreground">
-        <p className="text-lg font-medium">条件に合う求人が見つかりません</p>
-        <p className="mt-1 text-sm">検索条件を変えてみてください</p>
-      </div>
+      <EmptyState
+        icon="📋"
+        title="条件に合う求人が見つかりません"
+        description="検索条件を変えるか、新しい求人を投稿してみてください"
+        action={{ label: "求人を投稿する", href: "/jobs/new" }}
+      />
     );
   }
 
@@ -248,7 +251,20 @@ export default async function JobsPage({
         fallback={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-52 animate-pulse rounded-lg bg-muted" />
+              <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
+                {/* Title */}
+                <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
+                {/* Company */}
+                <div className="h-3.5 w-1/2 rounded bg-muted animate-pulse" />
+                {/* Skills */}
+                <div className="flex gap-1.5 flex-wrap">
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <div key={j} className="h-5 w-14 rounded-full bg-muted animate-pulse" />
+                  ))}
+                </div>
+                {/* Budget */}
+                <div className="h-4 w-28 rounded bg-muted animate-pulse mt-auto" />
+              </div>
             ))}
           </div>
         }
