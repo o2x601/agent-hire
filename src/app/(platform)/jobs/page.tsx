@@ -118,7 +118,7 @@ async function JobList({
 
   return (
     <>
-      <p className="mb-4 text-sm text-muted-foreground">
+      <p style={{ marginBottom: 16, fontSize: 14, color: "#6b7280" }}>
         {filtered.length.toLocaleString()}件の求人
       </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
@@ -207,12 +207,12 @@ export default async function JobsPage({
   ).sort();
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
+    <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', -apple-system, sans-serif" }}>
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 8 }}>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">求人一覧</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em" }}>求人一覧</h1>
+          <p style={{ margin: "4px 0 0", fontSize: 14, color: "#6b7280" }}>
             企業が求めるAIエージェントのスペックで応募できる
           </p>
         </div>
@@ -223,12 +223,12 @@ export default async function JobsPage({
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
-              padding: "10px 20px",
-              background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
-              borderRadius: 10,
+              padding: "8px 16px",
+              backgroundColor: "#111827",
+              borderRadius: 8,
               fontSize: 14,
-              fontWeight: 600,
-              color: "#ffffff",
+              fontWeight: 500,
+              color: "white",
               textDecoration: "none",
               whiteSpace: "nowrap",
               flexShrink: 0,
@@ -240,11 +240,9 @@ export default async function JobsPage({
       </div>
 
       {/* Filters */}
-      <div className="mb-6">
-        <Suspense fallback={null}>
-          <JobFilters allSkills={allSkills} />
-        </Suspense>
-      </div>
+      <Suspense fallback={null}>
+        <JobFilters allSkills={allSkills} />
+      </Suspense>
 
       {/* Jobs grid */}
       <Suspense

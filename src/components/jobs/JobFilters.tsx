@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 
 type Props = {
   allSkills: string[];
@@ -14,6 +13,16 @@ const SORT_OPTIONS = [
   { value: "budget_desc", label: "予算多い順" },
 ];
 
+const inputStyle: React.CSSProperties = {
+  border: "1px solid #e5e7eb",
+  borderRadius: 8,
+  padding: "8px 12px",
+  fontSize: 14,
+  outline: "none",
+  backgroundColor: "white",
+  color: "#111827",
+};
+
 export function JobFilters({ allSkills }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -24,6 +33,8 @@ export function JobFilters({ allSkills }: Props) {
   const sort = searchParams.get("sort") ?? "newest";
 
   const [inputValue, setInputValue] = useState(searchParams.get("q") ?? "");
+  const [inputFocused, setInputFocused] = useState(false);
+  const [sortFocused, setSortFocused] = useState(false);
 
   useEffect(() => {
     setInputValue(searchParams.get("q") ?? "");
@@ -62,20 +73,34 @@ export function JobFilters({ allSkills }: Props) {
   };
 
   return (
-    <div className={`space-y-3 transition-opacity ${isPending ? "opacity-50" : ""}`}>
-      {/* Search + Sort row */}
-      <div className="flex flex-wrap gap-3">
+    <div style={{ marginTop: 24, marginBottom: 16, display: "flex", flexDirection: "column", gap: 12, opacity: isPending ? 0.5 : 1, transition: "opacity 0.15s" }}>
+      {/* 検索バー + ソート */}
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <input
           type="text"
           placeholder="求人タイトル・スキルで検索..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring max-w-xs"
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
+          style={{
+            ...inputStyle,
+            width: "100%",
+            borderColor: inputFocused ? "#9ca3af" : "#e5e7eb",
+          }}
         />
         <select
           value={sort}
           onChange={(e) => updateParam("sort", e.target.value)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          onFocus={() => setSortFocused(true)}
+          onBlur={() => setSortFocused(false)}
+          style={{
+            ...inputStyle,
+            width: "auto",
+            flexShrink: 0,
+            borderColor: sortFocused ? "#9ca3af" : "#e5e7eb",
+            cursor: "pointer",
+          }}
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -85,30 +110,34 @@ export function JobFilters({ allSkills }: Props) {
         </select>
       </div>
 
-      {/* Skill filter chips */}
+      {/* スキルフィルタータグ */}
       {allSkills.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground">スキル:</span>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 13, color: "#9ca3af" }}>スキル:</span>
           {allSkills.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => handleSkillClick(s)}
-              className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
+              style={{
+                fontSize: 13,
+                backgroundColor: skill === s ? "#111827" : "#f3f4f6",
+                color: skill === s ? "white" : "#4b5563",
+                border: `1px solid ${skill === s ? "#111827" : "#e5e7eb"}`,
+                padding: "4px 10px",
+                borderRadius: 99,
+                cursor: "pointer",
+                outline: "none",
+              }}
             >
-              <Badge
-                variant={skill === s ? "default" : "outline"}
-                className="cursor-pointer transition-colors"
-              >
-                {s}
-              </Badge>
+              {s}
             </button>
           ))}
           {skill && (
             <button
               type="button"
               onClick={() => updateParam("skill", "")}
-              className="text-xs text-muted-foreground underline hover:text-foreground"
+              style={{ fontSize: 13, color: "#9ca3af", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", padding: 0 }}
             >
               リセット
             </button>
