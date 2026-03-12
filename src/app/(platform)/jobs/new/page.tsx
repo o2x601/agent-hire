@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CreateJobSchema } from "@/schemas/job";
+import { AGENT_CATEGORIES } from "@/lib/constants/categories";
 import {
   Card,
   CardContent,
@@ -191,6 +192,16 @@ function TagInput({
   );
 }
 
+/* ─── 数値フォーマット ───────────────────────────────────────── */
+function formatNumber(raw: string): string {
+  const n = parseInt(raw.replace(/,/g, ""), 10);
+  return isNaN(n) ? raw : n.toLocaleString("ja-JP");
+}
+
+function parseNumber(formatted: string): string {
+  return formatted.replace(/[^0-9]/g, "");
+}
+
 /* ─── メインコンポーネント ───────────────────────────────────── */
 export default function NewJobPage() {
   const router = useRouter();
@@ -200,6 +211,8 @@ export default function NewJobPage() {
   const [problemStatement, setProblemStatement] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
+  const [duration, setDuration] = useState("");
+  const [category, setCategory] = useState("");
   const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
   const [preferredSkills, setPreferredSkills] = useState<string[]>([]);
 
@@ -285,10 +298,15 @@ export default function NewJobPage() {
       companyId = newCompany.id;
     }
 
-    // 求人票を保存
+    // 求人票を保存 (budget_range は PostgreSQL int4range 形式に変換)
     const { error: dbError } = await supabase.from("jobs").insert({
       ...result.data,
       company_id: companyId,
+      budget_range: result.data.budget_range
+        ? `[${result.data.budget_range.min},${result.data.budget_range.max}]`
+        : null,
+      duration: duration || null,
+      category: category || null,
     });
 
     if (dbError) {
@@ -384,6 +402,48 @@ export default function NewJobPage() {
               </div>
             </div>
 
+            {/* カテゴリ */}
+            <div>
+              <label htmlFor="category" style={S.label}>
+                カテゴリ
+                <span style={{ color: "var(--destructive)", marginLeft: 4 }}>*</span>
+              </label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+                  height: 40,
+                  background: "var(--card)",
+                  border: `1px solid ${fieldErrors["category"] ? "var(--destructive)" : "var(--border)"}`,
+                  borderRadius: 8,
+                  padding: "0 12px",
+                  fontSize: 14,
+                  color: category ? "var(--foreground)" : "var(--muted-foreground)",
+                  outline: "none",
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                  appearance: "auto",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                onBlur={(e) =>
+                  (e.currentTarget.style.borderColor = fieldErrors["category"]
+                    ? "var(--destructive)"
+                    : "var(--border)")
+                }
+              >
+                <option value="">選択してください</option>
+                {AGENT_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              {fieldErrors["category"] && (
+                <p style={S.fieldError}>{fieldErrors["category"]}</p>
+              )}
+            </div>
+
             {/* 解決したい課題 */}
             <div>
               <label htmlFor="problem" style={S.label}>
@@ -453,11 +513,10 @@ export default function NewJobPage() {
                     ¥
                   </span>
                   <input
-                    type="number"
-                    min="0"
-                    step="1000"
-                    value={budgetMin}
-                    onChange={(e) => setBudgetMin(e.target.value)}
+                    type="text"
+                    inputMode="numeric"
+                    value={budgetMin ? formatNumber(budgetMin) : ""}
+                    onChange={(e) => setBudgetMin(parseNumber(e.target.value))}
                     placeholder="50,000"
                     style={{ ...S.numberInput, paddingLeft: 28 }}
                     onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
@@ -484,11 +543,10 @@ export default function NewJobPage() {
                     ¥
                   </span>
                   <input
-                    type="number"
-                    min="0"
-                    step="1000"
-                    value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
+                    type="text"
+                    inputMode="numeric"
+                    value={budgetMax ? formatNumber(budgetMax) : ""}
+                    onChange={(e) => setBudgetMax(parseNumber(e.target.value))}
                     placeholder="200,000"
                     style={{ ...S.numberInput, paddingLeft: 28 }}
                     onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
@@ -509,6 +567,47 @@ export default function NewJobPage() {
                 下限は上限以下にしてください
               </p>
             )}
+          </CardContent>
+        </Card>
+
+        {/* ── 契約期間 ─────────────────────────────────────────── */}
+        <Card>
+          <CardHeader>
+            <CardTitle>契約期間</CardTitle>
+            <CardDescription>
+              契約期間の目安を選択してください
+              <span style={{ ...S.hint, marginLeft: 0 }}>任意</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <select
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              style={{
+                width: "100%",
+                height: 40,
+                background: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                padding: "0 12px",
+                fontSize: 14,
+                color: duration ? "var(--foreground)" : "var(--muted-foreground)",
+                outline: "none",
+                fontFamily: "inherit",
+                cursor: "pointer",
+                appearance: "auto",
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+            >
+              <option value="">選択してください</option>
+              <option value="1ヶ月未満">1ヶ月未満</option>
+              <option value="1〜3ヶ月">1〜3ヶ月</option>
+              <option value="3〜6ヶ月">3〜6ヶ月</option>
+              <option value="6ヶ月〜1年">6ヶ月〜1年</option>
+              <option value="1年以上">1年以上</option>
+              <option value="期間未定">期間未定</option>
+            </select>
           </CardContent>
         </Card>
 
@@ -600,6 +699,7 @@ export default function NewJobPage() {
               submitting ||
               !title.trim() ||
               !problemStatement.trim() ||
+              !category ||
               (!!budgetMin && !!budgetMax && parseInt(budgetMin) > parseInt(budgetMax))
             }
           >

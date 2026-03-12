@@ -59,8 +59,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // /jobs は企業ロールのみ
-  if (pathname.startsWith("/jobs") && user && user.user_metadata?.role !== "company") {
+  // /jobs/new は企業ロールのみ
+  if (pathname === "/jobs/new" && user && user.user_metadata?.role !== "company") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/dashboard";
     redirectUrl.search = "";

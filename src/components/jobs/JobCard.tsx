@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ApplyButton } from "@/components/jobs/ApplyButton";
@@ -24,6 +27,7 @@ export function JobCard({
   userAgents,
   alreadyApplied,
 }: Props) {
+  const router = useRouter();
   const budget = BudgetRangeSchema.safeParse(job.budget_range);
   const specs = RequiredSpecsSchema.safeParse(job.required_specs);
   const requiredSkills = specs.success ? (specs.data.skills ?? []) : [];
@@ -38,7 +42,8 @@ export function JobCard({
 
   return (
     <Card
-      className={`group relative flex flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+      onClick={() => router.push(`/jobs/${job.id}`)}
+      className={`relative flex flex-col overflow-hidden transition-all cursor-pointer hover:shadow-lg hover:-translate-y-0.5 ${
         isOwnCompany ? "ring-2 ring-primary" : ""
       }`}
     >
@@ -109,12 +114,14 @@ export function JobCard({
           {new Date(job.created_at).toLocaleDateString("ja-JP")}
         </span>
         {isDeveloper && job.status === "open" && (
-          <ApplyButton
-            jobId={job.id}
-            jobTitle={job.title}
-            userAgents={userAgents}
-            alreadyApplied={alreadyApplied}
-          />
+          <span onClick={(e) => e.stopPropagation()}>
+            <ApplyButton
+              jobId={job.id}
+              jobTitle={job.title}
+              userAgents={userAgents}
+              alreadyApplied={alreadyApplied}
+            />
+          </span>
         )}
       </CardFooter>
     </Card>

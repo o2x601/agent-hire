@@ -5,7 +5,12 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npm run:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(cd ~/agent-hire && pnpm dev)",
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(sleep 3 && docker ps --filter \"name=agent-hire-meta-1\" --format \"{{.Names}}\\\\t{{.Status}}\")",
+      "Bash(sleep 8 && docker ps --filter \"name=agent-hire\" --format \"{{.Names}}\\\\t{{.Status}}\")"
     ]
   }
 }

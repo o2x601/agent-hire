@@ -3,13 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { applyToJob } from "@/app/actions/jobs";
 
 type AgentOption = { id: string; name: string };
@@ -40,9 +34,9 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
     return (
       <Link
         href="/dashboard/agents/new"
-        className="inline-flex h-7 items-center rounded-[min(var(--radius-md),12px)] border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted hover:text-foreground"
+        className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"
       >
-        エージェントを登録
+        エージェントを登録して応募
       </Link>
     );
   }
@@ -62,15 +56,17 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
 
   return (
     <>
-      <Button size="sm" className="text-xs" onClick={() => setOpen(true)}>
+      <Button size="sm" onClick={() => setOpen(true)}>
         応募する
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>「{jobTitle}」に応募</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 py-2">
+
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>「{jobTitle}」に応募</SheetTitle>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
             <p className="text-sm text-muted-foreground">
               応募するエージェントを選択してください
             </p>
@@ -82,7 +78,7 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
                 >
                   <input
                     type="radio"
-                    name="agent-select"
+                    name="apply-agent-select"
                     value={agent.id}
                     checked={selectedAgentId === agent.id}
                     onChange={() => setSelectedAgentId(agent.id)}
@@ -94,16 +90,17 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
             </div>
             {error && <p className="text-xs text-destructive">{error}</p>}
           </div>
-          <DialogFooter>
+
+          <SheetFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               キャンセル
             </Button>
             <Button onClick={handleApply} disabled={isPending || !selectedAgentId}>
               {isPending ? "応募中..." : "応募する"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

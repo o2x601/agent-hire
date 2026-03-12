@@ -2,13 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { sendScout } from "@/app/actions/scouts";
 
 type JobOption = { id: string; title: string };
@@ -28,9 +22,7 @@ export function ScoutButton({ agentId, agentName, companyJobs, scoutedJobIds }: 
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  if (companyJobs.length === 0) {
-    return null;
-  }
+  if (companyJobs.length === 0) return null;
 
   const availableJobs = companyJobs.filter((j) => !scoutedJobIds.has(j.id));
   const allScouted = availableJobs.length === 0;
@@ -61,14 +53,18 @@ export function ScoutButton({ agentId, agentName, companyJobs, scoutedJobIds }: 
       <Button size="sm" onClick={() => setOpen(true)}>
         スカウトする
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>「{agentName}」へスカウトを送る</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
+
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>「{agentName}」へスカウトを送る</SheetTitle>
+          </SheetHeader>
+
+          {/* スクロール可能なフォームエリア */}
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+            {/* 求人選択 */}
             <div>
-              <p className="mb-2 text-sm font-medium">紐づける求人票</p>
+              <p className="mb-3 text-sm font-medium">紐づける求人票</p>
               <div className="space-y-2">
                 {availableJobs.map((job) => (
                   <label
@@ -77,7 +73,7 @@ export function ScoutButton({ agentId, agentName, companyJobs, scoutedJobIds }: 
                   >
                     <input
                       type="radio"
-                      name="job-select"
+                      name="scout-job-select"
                       value={job.id}
                       checked={selectedJobId === job.id}
                       onChange={() => setSelectedJobId(job.id)}
@@ -88,28 +84,32 @@ export function ScoutButton({ agentId, agentName, companyJobs, scoutedJobIds }: 
                 ))}
               </div>
             </div>
+
+            {/* メッセージ */}
             <div>
               <p className="mb-2 text-sm font-medium">メッセージ（任意）</p>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="スカウトの理由や詳細をご記入ください..."
-                rows={4}
+                rows={5}
                 className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 resize-none"
               />
             </div>
+
             {error && <p className="text-xs text-destructive">{error}</p>}
           </div>
-          <DialogFooter>
+
+          <SheetFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               キャンセル
             </Button>
             <Button onClick={handleSend} disabled={isPending || !selectedJobId}>
               {isPending ? "送信中..." : "スカウトを送る"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
