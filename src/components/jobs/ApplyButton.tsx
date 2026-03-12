@@ -61,8 +61,9 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
         style={{
           backgroundColor: "#111827",
           color: "#ffffff",
-          fontSize: 12,
-          padding: "6px 12px",
+          fontSize: 14,
+          fontWeight: 600,
+          padding: "10px 24px",
           borderRadius: 8,
           border: "none",
           cursor: "pointer",

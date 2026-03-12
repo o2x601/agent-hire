@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ApplyButton } from "@/components/jobs/ApplyButton";
 import { BudgetRangeSchema, RequiredSpecsSchema } from "@/schemas/job";
 
@@ -18,11 +16,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     { data: job, error },
     { data: { user } },
   ] = await Promise.all([
-    supabase
-      .from("jobs")
-      .select("*, companies(name)")
-      .eq("id", id)
-      .single(),
+    supabase.from("jobs").select("*, companies(name)").eq("id", id).single(),
     supabase.auth.getUser(),
   ]);
 
@@ -32,7 +26,6 @@ export default async function JobDetailPage({ params }: PageProps) {
   const isDeveloper = role === "developer";
   const isCompany = role === "company";
 
-  // 企業ロール: 自社求人か確認
   let isOwnJob = false;
   let userAgents: { id: string; name: string }[] = [];
   let alreadyApplied = false;
@@ -72,110 +65,121 @@ export default async function JobDetailPage({ params }: PageProps) {
 
   const companyName = (job.companies as { name: string } | null)?.name ?? null;
 
-  const statusLabel: Record<string, string> = {
-    open: "募集中",
-    closed: "募集終了",
-    filled: "採用済み",
+  const statusStyle: Record<string, { label: string; bg: string; color: string }> = {
+    open:   { label: "募集中",   bg: "#f0fdf4", color: "#16a34a" },
+    closed: { label: "募集終了", bg: "#f3f4f6", color: "#6b7280" },
+    filled: { label: "採用済み", bg: "#eff6ff", color: "#2563eb" },
   };
+  const status = statusStyle[job.status] ?? { label: job.status, bg: "#f3f4f6", color: "#6b7280" };
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-10">
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+
       {/* 戻るリンク */}
       <Link
         href="/jobs"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 24 }}
       >
         ← 求人一覧に戻る
       </Link>
 
-      {/* ヘッダー */}
-      <div className="mt-4 mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <Badge variant={job.status === "open" ? "default" : "secondary"}>
-            {statusLabel[job.status] ?? job.status}
-          </Badge>
+      {/* ── ヘッダーカード ── */}
+      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, padding: 28, marginBottom: 16 }}>
+        {/* ステータス + カテゴリ */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+          <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: status.bg, color: status.color, padding: "3px 10px", borderRadius: 99 }}>
+            {status.label}
+          </span>
           {job.category && (
-            <Badge variant="outline">{job.category}</Badge>
+            <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#f3f4f6", color: "#6b7280", padding: "3px 10px", borderRadius: 99 }}>
+              {job.category}
+            </span>
           )}
         </div>
-        <h1 className="text-3xl font-bold tracking-tight leading-tight mb-2">
+
+        {/* タイトル */}
+        <h1 style={{ margin: "0 0 10px", fontSize: 24, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
           {job.title}
         </h1>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          {companyName && <span>{companyName}</span>}
-          <span>投稿日: {new Date(job.created_at).toLocaleDateString("ja-JP")}</span>
+
+        {/* 企業名 + 投稿日 */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 14, color: "#6b7280" }}>
+          {companyName && <span style={{ fontWeight: 500 }}>{companyName}</span>}
+          <span>{new Date(job.created_at).toLocaleDateString("ja-JP")} 投稿</span>
         </div>
       </div>
 
-      <Separator className="mb-8" />
-
-      {/* メタ情報 */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 mb-8">
+      {/* ── メタ情報 ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12, marginBottom: 16 }}>
         {budget.success && (
-          <div className="rounded-lg border p-4">
-            <p className="text-xs text-muted-foreground mb-1">予算</p>
-            <p className="text-sm font-semibold">
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "14px 16px" }}>
+            <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em" }}>予算</p>
+            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#111827" }}>
               ¥{budget.data.min.toLocaleString()} 〜 ¥{budget.data.max.toLocaleString()}
             </p>
           </div>
         )}
         {job.duration && (
-          <div className="rounded-lg border p-4">
-            <p className="text-xs text-muted-foreground mb-1">契約期間</p>
-            <p className="text-sm font-semibold">{job.duration}</p>
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "14px 16px" }}>
+            <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em" }}>契約期間</p>
+            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.duration}</p>
           </div>
         )}
         {job.category && (
-          <div className="rounded-lg border p-4">
-            <p className="text-xs text-muted-foreground mb-1">カテゴリ</p>
-            <p className="text-sm font-semibold">{job.category}</p>
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "14px 16px" }}>
+            <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em" }}>カテゴリ</p>
+            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.category}</p>
           </div>
         )}
       </div>
 
-      {/* 課題・説明 */}
-      <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3">解決したい課題</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
-          {job.problem_statement}
-        </p>
-      </section>
+      {/* ── 本文カード ── */}
+      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, padding: 28, marginBottom: 16 }}>
 
-      {/* スキル要件 */}
-      {(requiredSkills.length > 0 || preferredSkills.length > 0) && (
-        <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">スキル要件</h2>
-          {requiredSkills.length > 0 && (
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-destructive uppercase tracking-wide mb-2">必須</p>
-              <div className="flex flex-wrap gap-2">
-                {requiredSkills.map((skill) => (
-                  <Badge key={skill} variant="outline" className="text-xs">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-          {preferredSkills.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">あると嬉しい</p>
-              <div className="flex flex-wrap gap-2">
-                {preferredSkills.map((skill) => (
-                  <Badge key={skill} variant="outline" className="text-xs text-muted-foreground">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
+        {/* 課題説明 */}
+        <section style={{ marginBottom: 28 }}>
+          <h2 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: "#111827" }}>解決したい課題</h2>
+          <p style={{ margin: 0, fontSize: 14, color: "#6b7280", lineHeight: 1.8, whiteSpace: "pre-wrap" }}>
+            {job.problem_statement}
+          </p>
         </section>
-      )}
 
-      <Separator className="mb-8" />
+        {/* スキル要件 */}
+        {(requiredSkills.length > 0 || preferredSkills.length > 0) && (
+          <section>
+            <h2 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: "#111827" }}>スキル要件</h2>
 
-      {/* アクション */}
-      <div className="flex flex-wrap items-center gap-3">
+            {requiredSkills.length > 0 && (
+              <div style={{ marginBottom: 16 }}>
+                <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 600, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.06em" }}>必須</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {requiredSkills.map((skill) => (
+                    <span key={skill} style={{ fontSize: 12, backgroundColor: "#fef2f2", color: "#991b1b", padding: "4px 10px", borderRadius: 99 }}>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {preferredSkills.length > 0 && (
+              <div>
+                <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em" }}>歓迎</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {preferredSkills.map((skill) => (
+                    <span key={skill} style={{ fontSize: 12, backgroundColor: "#f3f4f6", color: "#6b7280", padding: "4px 10px", borderRadius: 99 }}>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+      </div>
+
+      {/* ── アクションエリア ── */}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
         {isDeveloper && job.status === "open" && (
           <ApplyButton
             jobId={job.id}
@@ -188,7 +192,7 @@ export default async function JobDetailPage({ params }: PageProps) {
           <>
             <Link
               href={`/jobs/${job.id}/edit`}
-              className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium transition-colors hover:bg-accent"
+              style={{ fontSize: 13, fontWeight: 500, padding: "8px 16px", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, color: "#374151", textDecoration: "none" }}
             >
               編集
             </Link>
@@ -202,7 +206,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             >
               <button
                 type="submit"
-                className="inline-flex h-9 items-center rounded-md border border-destructive/40 bg-background px-4 text-sm font-medium text-destructive transition-colors hover:bg-destructive/5"
+                style={{ fontSize: 13, fontWeight: 500, padding: "8px 16px", backgroundColor: "#fff5f5", border: "1px solid #fecaca", borderRadius: 8, color: "#dc2626", cursor: "pointer" }}
               >
                 募集を終了
               </button>

@@ -50,9 +50,24 @@ export function ScoutButton({ agentId, agentName, companyJobs, scoutedJobIds }: 
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)}>
+      <button
+        onClick={() => setOpen(true)}
+        style={{
+          backgroundColor: "#111827",
+          color: "#ffffff",
+          fontSize: 13,
+          fontWeight: 600,
+          padding: "8px 20px",
+          borderRadius: 8,
+          border: "none",
+          cursor: "pointer",
+          transition: "background-color 0.15s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#374151")}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#111827")}
+      >
         スカウトする
-      </Button>
+      </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right">

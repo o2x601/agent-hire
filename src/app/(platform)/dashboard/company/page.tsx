@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Briefcase, Inbox, Send, UserCheck } from "lucide-react";
 import { ApplicationActionButton } from "@/components/dashboard/ApplicationActionButton";
 
 type TrackRecord = {
@@ -144,11 +145,12 @@ export default async function CompanyDashboardPage() {
   }
 
   // サマリ計算
-  const stats = [
-    { label: "投稿求人数", value: jobs.length, icon: "📋" },
-    { label: "受信応募数", value: applications.length, icon: "📥" },
-    { label: "スカウト送信数", value: scouts.length, icon: "📤" },
-    { label: "採用済み数", value: applications.filter((a) => a.status === "hired").length, icon: "✅" },
+  const hiredCount = applications.filter((a) => a.status === "hired").length;
+  const metrics = [
+    { label: "投稿求人数",     value: jobs.length,         Icon: Briefcase, accentColor: "#3b82f6" },
+    { label: "受信応募数",     value: applications.length, Icon: Inbox,     accentColor: "#8b5cf6" },
+    { label: "スカウト送信数", value: scouts.length,        Icon: Send,      accentColor: "#f59e0b" },
+    { label: "採用済み数",     value: hiredCount,           Icon: UserCheck, accentColor: "#10b981" },
   ];
 
   // 応募を求人ごとにグルーピング
@@ -166,10 +168,10 @@ export default async function CompanyDashboardPage() {
     hired: "採用済み",
   };
   const scoutStatusColor: Record<string, string> = {
-    pending: "#F59E0B",
-    interviewing: "#22C55E",
-    rejected: "#EF4444",
-    hired: "#22C55E",
+    pending: "#d97706",
+    interviewing: "#16a34a",
+    rejected: "#dc2626",
+    hired: "#16a34a",
   };
 
   return (
@@ -200,14 +202,14 @@ export default async function CompanyDashboardPage() {
             style={{
               fontSize: 28,
               fontWeight: 700,
-              color: "#E2EAF4",
+              color: "#111827",
               letterSpacing: "-0.02em",
               margin: 0,
             }}
           >
             {company.name}
           </h1>
-          <p style={{ color: "#7A8FA8", fontSize: 14, marginTop: 6 }}>{user.email}</p>
+          <p style={{ color: "#6b7280", fontSize: 14, marginTop: 6 }}>{user.email}</p>
         </div>
         <Link
           href="/jobs/new"
@@ -230,46 +232,46 @@ export default async function CompanyDashboardPage() {
       </div>
 
       {/* サマリカード */}
-      <div
-        className="grid grid-cols-2 md:grid-cols-4"
-        style={{
-          gap: 16,
-          marginBottom: 48,
-        }}
-      >
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
-              borderRadius: 12,
-              padding: 24,
-            }}
-          >
-            <div style={{ fontSize: 26, marginBottom: 12 }}>{stat.icon}</div>
-            <div style={{ fontSize: 32, fontWeight: 700, color: "#E2EAF4", letterSpacing: "-0.02em" }}>
-              {stat.value}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 48 }}>
+        {metrics.map(({ label, value, Icon, accentColor }) => {
+          const barW = Math.min(100, value * 20);
+          return (
+            <div
+              key={label}
+              style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon size={18} style={{ color: accentColor }} />
+                </div>
+                <span style={{ fontSize: 11, color: "#9ca3af", backgroundColor: "#f3f4f6", padding: "2px 8px", borderRadius: 99 }}>前週比 —</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1 }}>{value}</div>
+                <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{label}</div>
+              </div>
+              <div style={{ height: 4, backgroundColor: "#f3f4f6", borderRadius: 99, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${barW}%`, backgroundColor: accentColor, borderRadius: 99 }} />
+              </div>
             </div>
-            <div style={{ fontSize: 13, color: "#7A8FA8", marginTop: 4 }}>{stat.label}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 自社求人一覧 */}
       <section style={{ marginBottom: 48 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#E2EAF4", marginBottom: 16 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
           📋 自社求人一覧
         </h2>
         {jobs.length === 0 ? (
           <div
             style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
               borderRadius: 12,
               padding: 32,
               textAlign: "center",
-              color: "#7A8FA8",
+              color: "#9ca3af",
             }}
           >
             <p style={{ fontSize: 14 }}>まだ求人を投稿していません</p>
@@ -278,13 +280,14 @@ export default async function CompanyDashboardPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {jobs.map((job) => {
               const appCount = appsByJob.get(job.id)?.length ?? 0;
-              const jobStatusColor = job.status === "open" ? "#22C55E" : job.status === "filled" ? "#3B82F6" : "#7A8FA8";
+              const jobStatusColor = job.status === "open" ? "#16a34a" : job.status === "filled" ? "#2563eb" : "#6b7280";
+              const jobStatusBg = job.status === "open" ? "#f0fdf4" : job.status === "filled" ? "#eff6ff" : "#f3f4f6";
               return (
                 <div
                   key={job.id}
                   style={{
-                    background: "#0C1019",
-                    border: "1px solid #1E2A3A",
+                    background: "#ffffff",
+                    border: "1px solid #e5e7eb",
                     borderRadius: 12,
                     padding: "16px 20px",
                     display: "flex",
@@ -294,7 +297,7 @@ export default async function CompanyDashboardPage() {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: "#E2EAF4" }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
                       {job.title}
                     </span>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
@@ -304,14 +307,13 @@ export default async function CompanyDashboardPage() {
                           fontWeight: 600,
                           color: jobStatusColor,
                           padding: "2px 8px",
-                          borderRadius: 4,
-                          background: `${jobStatusColor}18`,
-                          border: `1px solid ${jobStatusColor}40`,
+                          borderRadius: 99,
+                          background: jobStatusBg,
                         }}
                       >
                         {job.status === "open" ? "募集中" : job.status === "filled" ? "採用済" : "終了"}
                       </span>
-                      <span style={{ fontSize: 11, color: "#4A5A6A" }}>
+                      <span style={{ fontSize: 11, color: "#9ca3af" }}>
                         {new Date(job.created_at).toLocaleDateString("ja-JP")}
                       </span>
                     </div>
@@ -319,16 +321,9 @@ export default async function CompanyDashboardPage() {
                   <div style={{ flexShrink: 0 }}>
                     <span
                       style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
                         fontSize: 13,
-                        fontWeight: 700,
-                        color: appCount > 0 ? "#3B82F6" : "#4A5A6A",
-                        padding: "4px 12px",
-                        borderRadius: 20,
-                        background: appCount > 0 ? "#1E3A5F" : "#0F1620",
-                        border: `1px solid ${appCount > 0 ? "#2563EB40" : "#1E2A3A"}`,
+                        fontWeight: 600,
+                        color: appCount > 0 ? "#2563eb" : "#9ca3af",
                       }}
                     >
                       {appCount} 件の応募
@@ -343,18 +338,18 @@ export default async function CompanyDashboardPage() {
 
       {/* 応募者一覧 */}
       <section style={{ marginBottom: 48 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#E2EAF4", marginBottom: 16 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
           📥 応募者一覧
         </h2>
         {applications.length === 0 ? (
           <div
             style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
               borderRadius: 12,
               padding: 32,
               textAlign: "center",
-              color: "#7A8FA8",
+              color: "#9ca3af",
             }}
           >
             <p style={{ fontSize: 14 }}>まだ応募はありません</p>
@@ -370,7 +365,7 @@ export default async function CompanyDashboardPage() {
                     style={{
                       fontSize: 12,
                       fontWeight: 600,
-                      color: "#3B82F6",
+                      color: "var(--primary)",
                       letterSpacing: "0.06em",
                       textTransform: "uppercase",
                       marginBottom: 10,
@@ -386,8 +381,8 @@ export default async function CompanyDashboardPage() {
                         <div
                           key={app.id}
                           style={{
-                            background: "#0C1019",
-                            border: "1px solid #1E2A3A",
+                            background: "#ffffff",
+                            border: "1px solid #e5e7eb",
                             borderRadius: 12,
                             padding: 20,
                             display: "flex",
@@ -398,10 +393,10 @@ export default async function CompanyDashboardPage() {
                         >
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-                              <span style={{ fontSize: 15, fontWeight: 700, color: "#E2EAF4" }}>
+                              <span style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>
                                 {agent?.name ?? "不明なエージェント"}
                               </span>
-                              <span style={{ fontSize: 11, color: "#4A5A6A" }}>
+                              <span style={{ fontSize: 11, color: "#9ca3af" }}>
                                 {new Date(app.created_at).toLocaleDateString("ja-JP")} 応募
                               </span>
                             </div>
@@ -415,18 +410,17 @@ export default async function CompanyDashboardPage() {
                                     style={{
                                       fontSize: 11,
                                       fontWeight: 500,
-                                      color: "#93C5FD",
+                                      color: "#4b5563",
                                       padding: "3px 8px",
-                                      borderRadius: 4,
-                                      background: "#1E3A5F",
-                                      border: "1px solid #2563EB30",
+                                      borderRadius: 99,
+                                      background: "#f3f4f6",
                                     }}
                                   >
                                     {skill}
                                   </span>
                                 ))}
                                 {agent.skills.length > 6 && (
-                                  <span style={{ fontSize: 11, color: "#4A5A6A" }}>
+                                  <span style={{ fontSize: 11, color: "#9ca3af" }}>
                                     +{agent.skills.length - 6}
                                   </span>
                                 )}
@@ -437,22 +431,22 @@ export default async function CompanyDashboardPage() {
                             {tr && (
                               <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                                 {tr.uptime_percentage !== undefined && (
-                                  <span style={{ fontSize: 12, color: tr.uptime_percentage >= 99 ? "#22C55E" : tr.uptime_percentage >= 95 ? "#F59E0B" : "#EF4444" }}>
+                                  <span style={{ fontSize: 12, color: tr.uptime_percentage >= 99 ? "#16a34a" : tr.uptime_percentage >= 95 ? "#d97706" : "#dc2626" }}>
                                     稼働率 {tr.uptime_percentage}%
                                   </span>
                                 )}
                                 {tr.total_processed !== undefined && (
-                                  <span style={{ fontSize: 12, color: "#7A8FA8" }}>
+                                  <span style={{ fontSize: 12, color: "#6b7280" }}>
                                     処理数 {tr.total_processed.toLocaleString()}
                                   </span>
                                 )}
                                 {tr.avg_response_ms !== undefined && (
-                                  <span style={{ fontSize: 12, color: "#7A8FA8" }}>
+                                  <span style={{ fontSize: 12, color: "#6b7280" }}>
                                     応答 {tr.avg_response_ms}ms
                                   </span>
                                 )}
                                 {tr.error_rate !== undefined && (
-                                  <span style={{ fontSize: 12, color: tr.error_rate <= 1 ? "#22C55E" : tr.error_rate <= 5 ? "#F59E0B" : "#EF4444" }}>
+                                  <span style={{ fontSize: 12, color: tr.error_rate <= 1 ? "#16a34a" : tr.error_rate <= 5 ? "#d97706" : "#dc2626" }}>
                                     エラー率 {tr.error_rate}%
                                   </span>
                                 )}
@@ -477,24 +471,24 @@ export default async function CompanyDashboardPage() {
 
       {/* スカウト送信履歴 */}
       <section>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#E2EAF4", marginBottom: 16 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
           📤 スカウト送信履歴
         </h2>
         {scouts.length === 0 ? (
           <div
             style={{
-              background: "#0C1019",
-              border: "1px solid #1E2A3A",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
               borderRadius: 12,
               padding: 32,
               textAlign: "center",
-              color: "#7A8FA8",
+              color: "#9ca3af",
             }}
           >
             <p style={{ fontSize: 14 }}>まだスカウトを送信していません</p>
             <Link
               href="/agents"
-              style={{ fontSize: 13, color: "#3B82F6", textDecoration: "none", marginTop: 8, display: "inline-block" }}
+              style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none", marginTop: 8, display: "inline-block" }}
             >
               エージェントを探す →
             </Link>
@@ -502,13 +496,13 @@ export default async function CompanyDashboardPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {scouts.map((scout) => {
-              const color = scoutStatusColor[scout.status] ?? "#7A8FA8";
+              const color = scoutStatusColor[scout.status] ?? "#6b7280";
               return (
                 <div
                   key={scout.id}
                   style={{
-                    background: "#0C1019",
-                    border: "1px solid #1E2A3A",
+                    background: "#ffffff",
+                    border: "1px solid #e5e7eb",
                     borderRadius: 12,
                     padding: "14px 20px",
                     display: "flex",
@@ -519,13 +513,13 @@ export default async function CompanyDashboardPage() {
                 >
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: "#E2EAF4" }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
                         {scout.agentName}
                       </span>
-                      <span style={{ fontSize: 12, color: "#4A5A6A" }}>→</span>
-                      <span style={{ fontSize: 13, color: "#7A8FA8" }}>{scout.jobTitle}</span>
+                      <span style={{ fontSize: 12, color: "#9ca3af" }}>→</span>
+                      <span style={{ fontSize: 13, color: "#6b7280" }}>{scout.jobTitle}</span>
                     </div>
-                    <p style={{ fontSize: 11, color: "#4A5A6A", marginTop: 4 }}>
+                    <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 4 }}>
                       {new Date(scout.created_at).toLocaleDateString("ja-JP")}
                     </p>
                   </div>
@@ -534,10 +528,6 @@ export default async function CompanyDashboardPage() {
                       fontSize: 12,
                       fontWeight: 600,
                       color,
-                      padding: "4px 10px",
-                      borderRadius: 6,
-                      background: `${color}18`,
-                      border: `1px solid ${color}40`,
                       flexShrink: 0,
                     }}
                   >
