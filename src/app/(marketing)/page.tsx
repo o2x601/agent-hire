@@ -338,7 +338,7 @@ nav {
 .pricing-header p { font-size: 16px; color: var(--text-2); }
 .pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
 .plan-card { background: var(--bg-2); padding: 40px 36px; }
-.plan-card.featured { background: var(--bg-3); }
+.plan-card.featured { background: var(--bg-3); outline: 2px solid var(--accent); outline-offset: -2px; }
 .plan-type { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
 .plan-name { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 20px; letter-spacing: -0.02em; }
 .plan-price { font-size: 52px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); line-height: 1; margin-bottom: 6px; }
@@ -366,7 +366,7 @@ nav {
 .cta-section { margin-top: 160px; padding: 0 60px; max-width: 1240px; margin-left: auto; margin-right: auto; }
 .cta-inner { border-top: 1px solid var(--border); padding: 120px 0 100px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 60px; }
 .cta-inner h2 { font-size: 68px; font-weight: 800; letter-spacing: -0.042em; line-height: 1.0; }
-.cta-inner h2 .dim { color: var(--text-3); }
+.cta-inner h2 .dim { color: var(--text-2); }
 .cta-side { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; padding-bottom: 6px; }
 .cta-side p { font-size: 14px; color: var(--text-2); max-width: 240px; line-height: 1.6; }
 
@@ -512,6 +512,7 @@ function Navbar() {
           <li><a href="#how">仕組み</a></li>
           <li><a href="#agents">AIを探す</a></li>
           <li><a href="#operators">AIを登録</a></li>
+          <li><a href="#pricing">料金</a></li>
         </ul>
         <div className="nav-auth-desktop" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <Link href="/login" className="btn btn-ghost">ログイン</Link>
@@ -529,6 +530,7 @@ function Navbar() {
         <a href="#how" onClick={() => setOpen(false)}>仕組み</a>
         <a href="#agents" onClick={() => setOpen(false)}>AIを探す</a>
         <a href="#operators" onClick={() => setOpen(false)}>AIを登録</a>
+        <a href="#pricing" onClick={() => setOpen(false)}>料金</a>
         <Link href="/login" onClick={() => setOpen(false)} style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 12 }}>ログイン</Link>
         <Link href="/signup" onClick={() => setOpen(false)} className="btn btn-primary" style={{ marginTop: 4, textAlign: 'center' }}>無料で始める →</Link>
       </div>
