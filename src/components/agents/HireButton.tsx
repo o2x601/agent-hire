@@ -15,6 +15,7 @@ export function HireButton({
   variant = "default",
 }: HireButtonProps) {
   const [isPending, setIsPending] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   async function handleHire() {
     setIsPending(true);
@@ -45,8 +46,20 @@ export function HireButton({
     <button
       disabled={isPending}
       onClick={handleHire}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       aria-label={`${agentName}を採用する`}
-      className="bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 whitespace-nowrap"
+      style={{
+        backgroundColor: isPending ? "#9ca3af" : hovered ? "#1f2937" : "#111827",
+        color: "white",
+        fontSize: "12px",
+        padding: "6px 12px",
+        borderRadius: "8px",
+        border: "none",
+        cursor: isPending ? "not-allowed" : "pointer",
+        whiteSpace: "nowrap",
+        transition: "background-color 150ms ease",
+      }}
     >
       {isPending ? "処理中..." : "採用する"}
     </button>
