@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CreateAgentSchema } from "@/schemas/agent";
+import { AGENT_CATEGORIES } from "@/lib/constants/categories";
 import {
   Card,
   CardContent,
@@ -115,6 +116,7 @@ export default function NewAgentPage() {
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
   const [pricingModel, setPricingModel] = useState<"subscription" | "usage_based">("subscription");
+  const [category, setCategory] = useState<string>("");
   const [apiEndpoint, setApiEndpoint] = useState("");
 
   // 実績データ
@@ -177,6 +179,12 @@ export default function NewAgentPage() {
       api_endpoint: apiEndpoint.trim() || null,
     };
 
+    if (!category) {
+      setFieldErrors({ category: "カテゴリを選択してください" });
+      setGlobalError("入力内容を確認してください。");
+      return;
+    }
+
     // Zodバリデーション
     const result = CreateAgentSchema.safeParse(payload);
     if (!result.success) {
@@ -205,6 +213,7 @@ export default function NewAgentPage() {
     const { error: dbError } = await supabase.from("ai_agents").insert({
       ...result.data,
       developer_id: user.id,
+      category: category || null,
     });
 
     if (dbError) {
@@ -296,6 +305,41 @@ export default function NewAgentPage() {
               {fieldErrors["avatar_url"] && (
                 <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
                   {fieldErrors["avatar_url"]}
+                </p>
+              )}
+            </div>
+
+            {/* カテゴリ */}
+            <div>
+              <label htmlFor="category" style={S.label}>
+                カテゴリ
+                <span style={{ color: "var(--destructive)", marginLeft: 4 }}>*</span>
+              </label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+                style={{
+                  ...S.numberInput,
+                  cursor: "pointer",
+                  appearance: "none" as const,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 12px center",
+                  paddingRight: 32,
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+              >
+                <option value="" disabled>カテゴリを選択してください</option>
+                {AGENT_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              {fieldErrors["category"] && (
+                <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
+                  {fieldErrors["category"]}
                 </p>
               )}
             </div>
@@ -634,7 +678,7 @@ export default function NewAgentPage() {
               キャンセル
             </Button>
           </Link>
-          <Button type="submit" disabled={submitting || !name.trim()}>
+          <Button type="submit" disabled={submitting || !name.trim() || !category}>
             {submitting ? "提出中..." : "履歴書を提出する →"}
           </Button>
         </div>

@@ -512,7 +512,6 @@ function Navbar() {
           <li><a href="#how">仕組み</a></li>
           <li><a href="#agents">AIを探す</a></li>
           <li><a href="#operators">AIを登録</a></li>
-          <li><a href="#pricing">料金</a></li>
         </ul>
         <div className="nav-auth-desktop" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <Link href="/login" className="btn btn-ghost">ログイン</Link>
@@ -530,7 +529,6 @@ function Navbar() {
         <a href="#how" onClick={() => setOpen(false)}>仕組み</a>
         <a href="#agents" onClick={() => setOpen(false)}>AIを探す</a>
         <a href="#operators" onClick={() => setOpen(false)}>AIを登録</a>
-        <a href="#pricing" onClick={() => setOpen(false)}>料金</a>
         <Link href="/login" onClick={() => setOpen(false)} style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 12 }}>ログイン</Link>
         <Link href="/signup" onClick={() => setOpen(false)} className="btn btn-primary" style={{ marginTop: 4, textAlign: 'center' }}>無料で始める →</Link>
       </div>
@@ -1283,8 +1281,8 @@ function Footer() {
           <div className="footer-col">
             <h4>企業向け</h4>
             <ul>
-              <li><a href="#">AIエージェントを探す</a></li>
-              <li><a href="#">求人を掲載する</a></li>
+              <li><a href="/agents">AIエージェントを探す</a></li>
+              <li><a href="/jobs/new">求人を掲載する</a></li>
               <li><a href="#">料金プラン</a></li>
               <li><a href="#">導入事例</a></li>
             </ul>
@@ -1292,7 +1290,7 @@ function Footer() {
           <div className="footer-col">
             <h4>AI運営者向け</h4>
             <ul>
-              <li><a href="#">AIを登録する</a></li>
+              <li><a href="/agents/register">AIを登録する</a></li>
               <li><a href="#">APIドキュメント</a></li>
               <li><a href="#">SDK</a></li>
               <li><a href="#">収益化ガイド</a></li>
