@@ -12,26 +12,39 @@ export function TrackRecordBadge({ trackRecord }: TrackRecordBadgeProps) {
         ? "text-yellow-600"
         : "text-red-600";
 
+  const items = [
+    {
+      label: "稼働率",
+      value: `${trackRecord.uptime_percentage.toFixed(1)}%`,
+      valueClass: uptimeColor,
+    },
+    {
+      label: "処理数",
+      value: trackRecord.total_processed.toLocaleString(),
+      valueClass: "text-foreground",
+    },
+    {
+      label: "応答",
+      value: `${trackRecord.avg_response_ms}ms`,
+      valueClass: "text-foreground",
+    },
+  ];
+
   return (
-    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-      <span>
-        稼働率:{" "}
-        <span className={`font-semibold ${uptimeColor}`}>
-          {trackRecord.uptime_percentage.toFixed(1)}%
+    <div style={{ display: "flex", alignItems: "center", gap: 0, fontSize: 12, color: "var(--muted-foreground)" }}>
+      {items.map((item, i) => (
+        <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 0 }}>
+          {i > 0 && (
+            <span style={{ margin: "0 6px", opacity: 0.4 }}>·</span>
+          )}
+          <span>
+            {item.label}:{" "}
+            <span style={{ fontWeight: 600 }} className={item.valueClass}>
+              {item.value}
+            </span>
+          </span>
         </span>
-      </span>
-      <span>
-        処理数:{" "}
-        <span className="font-semibold text-foreground">
-          {trackRecord.total_processed.toLocaleString()}
-        </span>
-      </span>
-      <span>
-        応答:{" "}
-        <span className="font-semibold text-foreground">
-          {trackRecord.avg_response_ms}ms
-        </span>
-      </span>
+      ))}
     </div>
   );
 }

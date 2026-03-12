@@ -1,8 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ApplyButton } from "@/components/jobs/ApplyButton";
 import { BudgetRangeSchema, RequiredSpecsSchema } from "@/schemas/job";
 import type { Database } from "@/types/database";
@@ -17,6 +15,12 @@ type Props = {
   isDeveloper: boolean;
   userAgents: AgentOption[];
   alreadyApplied: boolean;
+};
+
+const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
+  open:   { label: "募集中",   bg: "#dcfce7", color: "#166534" },
+  closed: { label: "募集終了", bg: "#f3f4f6", color: "#6b7280" },
+  filled: { label: "採用済み", bg: "#ede9fe", color: "#5b21b6" },
 };
 
 export function JobCard({
@@ -34,86 +38,144 @@ export function JobCard({
   const preferredSkills = specs.success ? (specs.data.preferred_skills ?? []) : [];
   const allSkills = [...requiredSkills, ...preferredSkills];
 
-  const statusLabel: Record<string, string> = {
-    open: "募集中",
-    closed: "募集終了",
-    filled: "採用済み",
-  };
+  const status = statusConfig[job.status] ?? { label: job.status, bg: "#f3f4f6", color: "#6b7280" };
 
   return (
-    <Card
+    <div
       onClick={() => router.push(`/jobs/${job.id}`)}
-      className={`relative flex flex-col overflow-hidden transition-all cursor-pointer hover:shadow-lg hover:-translate-y-0.5 ${
-        isOwnCompany ? "ring-2 ring-primary" : ""
-      }`}
+      style={{
+        border: isOwnCompany ? "2px solid #6366f1" : "1px solid #e5e7eb",
+        borderRadius: 10,
+        padding: "16px",
+        marginBottom: 12,
+        background: "white",
+        cursor: "pointer",
+        transition: "box-shadow 0.15s, border-color 0.15s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+        e.currentTarget.style.borderColor = isOwnCompany ? "#6366f1" : "#d1d5db";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = isOwnCompany ? "#6366f1" : "#e5e7eb";
+      }}
     >
-      {isOwnCompany && (
-        <div className="absolute top-3 right-3 z-10">
-          <Badge className="text-xs">自社の求人</Badge>
-        </div>
-      )}
+      {/* 1行目: タイトル + ステータスバッジ */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+        <h3 style={{
+          fontWeight: 700,
+          fontSize: 16,
+          lineHeight: 1.4,
+          color: "#111827",
+          margin: 0,
+          flex: 1,
+          overflow: "hidden",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+        }}>
+          {job.title}
+        </h3>
+        <span style={{
+          flexShrink: 0,
+          fontSize: 11,
+          fontWeight: 600,
+          padding: "2px 10px",
+          borderRadius: 99,
+          background: status.bg,
+          color: status.color,
+        }}>
+          {status.label}
+        </span>
+      </div>
 
-      <CardHeader className="pb-2">
-        <div className="flex items-start gap-2 pr-20">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base leading-tight line-clamp-2">
-              {job.title}
-            </h3>
-            {companyName && (
-              <p className="mt-0.5 text-xs text-muted-foreground">{companyName}</p>
-            )}
-          </div>
-        </div>
-        <div className="mt-1 flex items-center gap-2">
-          <Badge
-            variant={job.status === "open" ? "default" : "secondary"}
-            className="text-xs"
-          >
-            {statusLabel[job.status] ?? job.status}
-          </Badge>
+      {/* 2行目: 会社名 + 投稿日 */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
+        <span style={{ fontSize: 12, color: "#6b7280" }}>
+          {companyName ?? ""}
           {budget.success && (
-            <span className="text-xs text-muted-foreground">
+            <span style={{ marginLeft: companyName ? 8 : 0, color: "#9ca3af" }}>
               ¥{budget.data.min.toLocaleString()} 〜 ¥{budget.data.max.toLocaleString()}
             </span>
           )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 pb-3">
-        <p className="text-sm text-muted-foreground line-clamp-3">
-          {job.problem_statement}
-        </p>
-
-        {allSkills.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {requiredSkills.slice(0, 4).map((skill) => (
-              <Badge key={skill} variant="outline" className="text-xs">
-                {skill}
-              </Badge>
-            ))}
-            {preferredSkills.slice(0, Math.max(0, 4 - requiredSkills.length)).map((skill) => (
-              <Badge
-                key={skill}
-                variant="outline"
-                className="text-xs text-muted-foreground"
-              >
-                {skill}
-              </Badge>
-            ))}
-            {allSkills.length > 4 && (
-              <Badge variant="outline" className="text-xs text-muted-foreground">
-                +{allSkills.length - 4}
-              </Badge>
-            )}
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="pt-0 flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">
+        </span>
+        <span style={{ fontSize: 11, color: "#9ca3af" }}>
           {new Date(job.created_at).toLocaleDateString("ja-JP")}
         </span>
-        {isDeveloper && job.status === "open" && (
+      </div>
+
+      {/* 3行目: 説明文 */}
+      {job.problem_statement && (
+        <p style={{
+          fontSize: 13,
+          color: "#6b7280",
+          marginTop: 8,
+          lineHeight: 1.5,
+          overflow: "hidden",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+        }}>
+          {job.problem_statement}
+        </p>
+      )}
+
+      {/* 4行目: スキルタグ */}
+      {allSkills.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
+          {requiredSkills.slice(0, 4).map((skill) => (
+            <span key={skill} style={{
+              fontSize: 11,
+              padding: "2px 8px",
+              background: "#f3f4f6",
+              borderRadius: 4,
+              color: "#374151",
+            }}>
+              {skill}
+            </span>
+          ))}
+          {preferredSkills.slice(0, Math.max(0, 4 - requiredSkills.length)).map((skill) => (
+            <span key={skill} style={{
+              fontSize: 11,
+              padding: "2px 8px",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: 4,
+              color: "#9ca3af",
+            }}>
+              {skill}
+            </span>
+          ))}
+          {allSkills.length > 4 && (
+            <span style={{
+              fontSize: 11,
+              padding: "2px 8px",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: 4,
+              color: "#9ca3af",
+            }}>
+              +{allSkills.length - 4}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* 5行目: 自社求人ラベル or 応募ボタン */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+        {isOwnCompany ? (
+          <span style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: "2px 10px",
+            background: "#ede9fe",
+            borderRadius: 99,
+            color: "#5b21b6",
+          }}>
+            自社の求人
+          </span>
+        ) : isDeveloper && job.status === "open" ? (
           <span onClick={(e) => e.stopPropagation()}>
             <ApplyButton
               jobId={job.id}
@@ -122,8 +184,8 @@ export function JobCard({
               alreadyApplied={alreadyApplied}
             />
           </span>
-        )}
-      </CardFooter>
-    </Card>
+        ) : null}
+      </div>
+    </div>
   );
 }

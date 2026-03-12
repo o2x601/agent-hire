@@ -2,14 +2,11 @@
 
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { XIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-/* ─── Context ────────────────────────────────────────────── */
-type SheetContextValue = { onClose: () => void };
-const SheetContext = React.createContext<SheetContextValue>({ onClose: () => {} });
+/* ─── Context ─────────────────────────────────────────────── */
+const SheetContext = React.createContext<{ onClose: () => void }>({ onClose: () => {} });
 
-/* ─── Root ───────────────────────────────────────────────── */
+/* ─── Root ────────────────────────────────────────────────── */
 function Sheet({
   open,
   onOpenChange,
@@ -19,13 +16,8 @@ function Sheet({
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
 }) {
-  // body scroll lock
   React.useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
@@ -38,83 +30,129 @@ function Sheet({
   );
 }
 
-/* ─── Content ────────────────────────────────────────────── */
-type Side = "right" | "left" | "bottom";
-
-const sideStyles: Record<Side, string> = {
-  right:  "top-0 right-0 h-full w-full sm:max-w-md",
-  left:   "top-0 left-0 h-full w-full sm:max-w-md",
-  bottom: "bottom-0 left-0 w-full max-h-[85vh] rounded-t-2xl",
-};
-
+/* ─── Content ─────────────────────────────────────────────── */
 function SheetContent({
-  side = "right",
-  className,
   children,
+  style,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { side?: Side }) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   const { onClose } = React.useContext(SheetContext);
 
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
-        aria-hidden
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0, 0, 0, 0.5)",
+          zIndex: 50,
+        }}
       />
       {/* Panel */}
       <div
         role="dialog"
         aria-modal="true"
-        className={cn(
-          "fixed z-50 flex flex-col bg-background shadow-xl",
-          sideStyles[side],
-          className
-        )}
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          height: "100vh",
+          width: 400,
+          maxWidth: "100vw",
+          background: "white",
+          zIndex: 51,
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: "-4px 0 24px rgba(0,0,0,0.12)",
+          ...style,
+        }}
         {...props}
       >
-        {children}
+        {/* 閉じるボタン */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           aria-label="閉じる"
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            width: 28,
+            height: 28,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 18,
+            color: "#666",
+            borderRadius: 6,
+            lineHeight: 1,
+          }}
         >
-          <XIcon size={16} />
+          ×
         </button>
+        {children}
       </div>
     </>
   );
 }
 
-/* ─── Header / Title / Footer ────────────────────────────── */
-function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+/* ─── Header ──────────────────────────────────────────────── */
+function SheetHeader({ children, style, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 px-6 py-5 border-b", className)}
+      style={{
+        padding: "20px 24px 16px",
+        borderBottom: "1px solid #e5e7eb",
+        ...style,
+      }}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 
-function SheetTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+/* ─── Title ───────────────────────────────────────────────── */
+function SheetTitle({ children, style, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h2
-      className={cn("text-base font-semibold leading-none", className)}
+      style={{
+        margin: 0,
+        fontSize: 16,
+        fontWeight: 600,
+        lineHeight: 1.4,
+        paddingRight: 32,
+        ...style,
+      }}
       {...props}
-    />
+    >
+      {children}
+    </h2>
   );
 }
 
-function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+/* ─── Footer ──────────────────────────────────────────────── */
+function SheetFooter({ children, style, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "flex flex-col-reverse gap-2 px-6 py-4 border-t sm:flex-row sm:justify-end",
-        className
-      )}
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: 8,
+        padding: "16px 24px",
+        borderTop: "1px solid #e5e7eb",
+        marginTop: "auto",
+        ...style,
+      }}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 

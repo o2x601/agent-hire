@@ -315,7 +315,7 @@ export default function NewJobPage() {
       return;
     }
 
-    router.push("/agents");
+    router.push("/dashboard/company");
   }
 
   /* ─── レンダリング ─────────────────────────────────────────── */
