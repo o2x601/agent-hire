@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import { respondToScout } from "@/app/actions/scouts";
 
 type Props = {
@@ -15,7 +14,7 @@ export function ScoutResponseButton({ interactionId }: Props) {
 
   if (done) {
     return (
-      <span className="text-sm font-medium" style={{ color: done === "accept" ? "#22c55e" : "#ef4444" }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: done === "accept" ? "#111827" : "#6b7280" }}>
         {done === "accept" ? "承諾済み" : "辞退済み"}
       </span>
     );
@@ -34,27 +33,44 @@ export function ScoutResponseButton({ interactionId }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex gap-2">
-        <Button
-          size="sm"
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
           onClick={() => handle("accept")}
           disabled={isPending}
-          className="text-xs"
+          style={{
+            padding: "7px 14px",
+            background: isPending ? "#9ca3af" : "#111827",
+            border: "none",
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#ffffff",
+            cursor: isPending ? "not-allowed" : "pointer",
+            whiteSpace: "nowrap",
+          }}
         >
           承諾
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
+        </button>
+        <button
           onClick={() => handle("reject")}
           disabled={isPending}
-          className="text-xs"
+          style={{
+            padding: "7px 14px",
+            background: "transparent",
+            border: "1px solid #e5e7eb",
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 600,
+            color: isPending ? "#9ca3af" : "#374151",
+            cursor: isPending ? "not-allowed" : "pointer",
+            whiteSpace: "nowrap",
+          }}
         >
           辞退
-        </Button>
+        </button>
       </div>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p style={{ fontSize: 12, color: "#ef4444", marginTop: 2 }}>{error}</p>}
     </div>
   );
 }

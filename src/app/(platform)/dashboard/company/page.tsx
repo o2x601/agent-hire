@@ -168,10 +168,10 @@ export default async function CompanyDashboardPage() {
     hired: "採用済み",
   };
   const scoutStatusColor: Record<string, string> = {
-    pending: "#d97706",
-    interviewing: "#16a34a",
-    rejected: "#dc2626",
-    hired: "#16a34a",
+    pending: "#6b7280",
+    interviewing: "#6b7280",
+    rejected: "#6b7280",
+    hired: "#6b7280",
   };
 
   return (
@@ -218,7 +218,7 @@ export default async function CompanyDashboardPage() {
             alignItems: "center",
             gap: 6,
             padding: "10px 20px",
-            background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+            background: "#111827",
             borderRadius: 10,
             fontSize: 14,
             fontWeight: 600,
@@ -233,25 +233,21 @@ export default async function CompanyDashboardPage() {
 
       {/* サマリカード */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 48 }}>
-        {metrics.map(({ label, value, Icon, accentColor }) => {
-          const barW = Math.min(100, value * 20);
+        {metrics.map(({ label, value, Icon }) => {
           return (
             <div
               key={label}
               style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Icon size={18} style={{ color: accentColor }} />
+                <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon size={18} style={{ color: "#9ca3af" }} />
                 </div>
                 <span style={{ fontSize: 11, color: "#9ca3af", backgroundColor: "#f3f4f6", padding: "2px 8px", borderRadius: 99 }}>前週比 —</span>
               </div>
               <div>
                 <div style={{ fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1 }}>{value}</div>
                 <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{label}</div>
-              </div>
-              <div style={{ height: 4, backgroundColor: "#f3f4f6", borderRadius: 99, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${barW}%`, backgroundColor: accentColor, borderRadius: 99 }} />
               </div>
             </div>
           );
@@ -323,7 +319,7 @@ export default async function CompanyDashboardPage() {
                       style={{
                         fontSize: 13,
                         fontWeight: 600,
-                        color: appCount > 0 ? "#2563eb" : "#9ca3af",
+                        color: "#6b7280",
                       }}
                     >
                       {appCount} 件の応募
@@ -431,7 +427,7 @@ export default async function CompanyDashboardPage() {
                             {tr && (
                               <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                                 {tr.uptime_percentage !== undefined && (
-                                  <span style={{ fontSize: 12, color: tr.uptime_percentage >= 99 ? "#16a34a" : tr.uptime_percentage >= 95 ? "#d97706" : "#dc2626" }}>
+                                  <span style={{ fontSize: 12, color: "#6b7280" }}>
                                     稼働率 {tr.uptime_percentage}%
                                   </span>
                                 )}
@@ -446,7 +442,7 @@ export default async function CompanyDashboardPage() {
                                   </span>
                                 )}
                                 {tr.error_rate !== undefined && (
-                                  <span style={{ fontSize: 12, color: tr.error_rate <= 1 ? "#16a34a" : tr.error_rate <= 5 ? "#d97706" : "#dc2626" }}>
+                                  <span style={{ fontSize: 12, color: "#6b7280" }}>
                                     エラー率 {tr.error_rate}%
                                   </span>
                                 )}

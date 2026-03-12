@@ -127,7 +127,7 @@ export default async function DashboardPage() {
             alignItems: "center",
             gap: 6,
             padding: "10px 20px",
-            background: "linear-gradient(135deg, var(--primary) 0%, #2563EB 100%)",
+            background: "#111827",
             borderRadius: 10,
             fontSize: 14,
             fontWeight: 600,
@@ -152,25 +152,21 @@ export default async function DashboardPage() {
         ];
         return (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
-            {metrics.map(({ label, value, Icon, accentColor }) => {
-              const barW = Math.min(100, value * 20);
+            {metrics.map(({ label, value, Icon }) => {
               return (
                 <div
                   key={label}
                   style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Icon size={18} style={{ color: accentColor }} />
+                    <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon size={18} style={{ color: "#9ca3af" }} />
                     </div>
                     <span style={{ fontSize: 11, color: "#9ca3af", backgroundColor: "#f3f4f6", padding: "2px 8px", borderRadius: 99 }}>前週比 —</span>
                   </div>
                   <div>
                     <div style={{ fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1 }}>{value}</div>
                     <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{label}</div>
-                  </div>
-                  <div style={{ height: 4, backgroundColor: "#f3f4f6", borderRadius: 99, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${barW}%`, backgroundColor: accentColor, borderRadius: 99, transition: "width 0.4s ease" }} />
                   </div>
                 </div>
               );

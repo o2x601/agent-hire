@@ -56,12 +56,12 @@ export function ApplicationActionButton({ interactionId, currentStatus }: Props)
         disabled={isPending}
         style={{
           padding: "7px 14px",
-          background: isPending ? "#1E2A3A" : "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+          background: isPending ? "#9ca3af" : "#111827",
           border: "none",
           borderRadius: 8,
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: 600,
-          color: isPending ? "#7A8FA8" : "#ffffff",
+          color: "#ffffff",
           cursor: isPending ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
         }}
@@ -74,11 +74,11 @@ export function ApplicationActionButton({ interactionId, currentStatus }: Props)
         style={{
           padding: "7px 14px",
           background: "transparent",
-          border: "1px solid #3A1E1E",
+          border: "1px solid #e5e7eb",
           borderRadius: 8,
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: 600,
-          color: isPending ? "#7A8FA8" : "#EF4444",
+          color: isPending ? "#9ca3af" : "#374151",
           cursor: isPending ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
         }}
