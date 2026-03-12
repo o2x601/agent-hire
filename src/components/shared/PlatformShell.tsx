@@ -87,7 +87,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
   const sidebarW = collapsed ? COLLAPSED_W : EXPANDED_W;
 
   return (
-    <>
+    <div style={{ overflowX: "hidden", position: "relative" }}>
       {/* ── Mobile hamburger (outside sidebar, shown on mobile only) ─ */}
       {!mobileOpen && (
         <button
@@ -216,7 +216,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Nav links */}
-        <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto" }}>
+        <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto", overflowX: "hidden" }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.href !== "#" && pathname === item.href;
@@ -433,6 +433,6 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
           }
         }
       `}</style>
-    </>
+    </div>
   );
 }
