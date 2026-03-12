@@ -6,10 +6,10 @@ _format_version: "1.1"
 consumers:
   - username: anon
     keyauth_credentials:
-      - key: ${ANON_KEY}
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlLWRlbW8iLCJpYXQiOjE3NzI5MzA3MDAsImV4cCI6MjA4ODI5MDcwMH0.__2m0R_1MV72OrLQSHOzP1VILVGy-IfA537L46ZFDJo
   - username: service_role
     keyauth_credentials:
-      - key: ${SERVICE_ROLE_KEY}
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UtZGVtbyIsImlhdCI6MTc3MjkzMDcwMCwiZXhwIjoyMDg4MjkwNzAwfQ.QzYw4Cd08zIP4EXeMmAvtcW4R8o-KVi1sU2HaUldJRU
 
 acls:
   - consumer: anon

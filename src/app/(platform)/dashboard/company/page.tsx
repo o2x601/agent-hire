@@ -61,7 +61,7 @@ export default async function CompanyDashboardPage() {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!company) redirect("/login");
+  if (!company) redirect("/onboarding/company");
 
   // 自社の求人を取得
   const { data: jobsData } = await supabase

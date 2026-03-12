@@ -30,7 +30,7 @@ export default function LoginPage() {
     }
 
     const role = data.user?.user_metadata?.role;
-    router.push(role === "company" ? "/agents" : "/dashboard");
+    router.push(role === "company" ? "/dashboard/company" : "/dashboard");
   }
 
   return (
