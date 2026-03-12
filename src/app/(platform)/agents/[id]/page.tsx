@@ -97,7 +97,7 @@ export default async function AgentResumePage({ params }: PageProps) {
   ];
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div style={{ maxWidth: 1000, margin: "0 auto", padding: 32, fontFamily: "'Inter', -apple-system, sans-serif" }}>
 
       {/* 戻るリンク */}
       <Link
@@ -107,134 +107,135 @@ export default async function AgentResumePage({ params }: PageProps) {
         ← エージェント一覧に戻る
       </Link>
 
-      {/* ── メインカード ── */}
-      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, padding: 32, marginBottom: 24 }}>
+      {/* ── ヘッダーセクション ── */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 24, marginBottom: 32 }}>
 
-        {/* 2カラムレイアウト */}
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.6fr)", gap: 40, alignItems: "start" }}>
+        {/* アバター */}
+        <div style={{
+          width: 72,
+          height: 72,
+          borderRadius: "50%",
+          backgroundColor: "#f3f4f6",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 24,
+          fontWeight: 600,
+          color: "#4b5563",
+          flexShrink: 0,
+          overflow: "hidden",
+        }}>
+          {agent.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : initials}
+        </div>
 
-          {/* ── 左: アバター + 基本情報 ── */}
-          <div>
-            {/* アバター */}
-            <div style={{
-              width: 80,
-              height: 80,
-              borderRadius: "50%",
-              backgroundColor: "#f3f4f6",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 24,
-              fontWeight: 700,
-              color: "#4b5563",
-              marginBottom: 16,
-              overflow: "hidden",
-            }}>
-              {agent.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : initials}
-            </div>
-
-            {/* 名前 */}
-            <h1 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700, color: "#111827", letterSpacing: "-0.01em" }}>
+        {/* 右: 名前・説明・ボタン */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* 1行目: 名前 + 料金タイプバッジ */}
+          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#111827", letterSpacing: "-0.01em" }}>
               {agent.name}
             </h1>
-
-            {/* バッジ */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-              <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#f3f4f6", color: "#6b7280", padding: "3px 10px", borderRadius: 99 }}>
-                {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
+            <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#f3f4f6", color: "#4b5563", padding: "3px 8px", borderRadius: 99 }}>
+              {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
+            </span>
+            {agent.is_verified && (
+              <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#f0fdf4", color: "#16a34a", padding: "3px 8px", borderRadius: 99 }}>
+                認証済
               </span>
-              {agent.is_verified && (
-                <span style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#f0fdf4", color: "#16a34a", padding: "3px 10px", borderRadius: 99 }}>
-                  認証済
-                </span>
-              )}
-            </div>
-
-            {/* 説明 */}
-            {agent.personality && (
-              <p style={{ margin: "0 0 20px", fontSize: 14, color: "#6b7280", lineHeight: 1.6 }}>
-                {agent.personality}
-              </p>
             )}
-
-            {/* アクションボタン */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {isCompany && companyJobs.length > 0 && (
-                <ScoutButton
-                  agentId={agent.id}
-                  agentName={agent.name}
-                  companyJobs={companyJobs}
-                  scoutedJobIds={scoutedJobIds}
-                />
-              )}
-              {isOwner && (
-                <Link
-                  href={`/agents/${agent.id}/edit`}
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 500,
-                    padding: "8px 16px",
-                    backgroundColor: "#f9fafb",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: 8,
-                    color: "#374151",
-                    textDecoration: "none",
-                  }}
-                >
-                  編集
-                </Link>
-              )}
-            </div>
           </div>
 
-          {/* ── 右: スキル + 実績 ── */}
-          <div>
-            {/* スキルタグ */}
-            {agent.skills.length > 0 && (
-              <section style={{ marginBottom: 28 }}>
-                <h2 style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600, color: "#374151", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  スキル
-                </h2>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {agent.skills.map((skill) => (
-                    <span key={skill} style={{ fontSize: 12, padding: "4px 10px", backgroundColor: "#f3f4f6", borderRadius: 99, color: "#4b5563" }}>
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
+          {/* 2行目: 説明文 */}
+          {agent.personality && (
+            <p style={{ margin: "6px 0 0", fontSize: 15, color: "#6b7280", lineHeight: 1.6 }}>
+              {agent.personality}
+            </p>
+          )}
 
-            {/* 実績カード */}
-            <section>
-              <h2 style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600, color: "#374151", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                実績データ
-              </h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-                {stats.map(({ value, label, color }) => (
-                  <div key={label} style={{ backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 14px" }}>
-                    <p style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-                      {value}
-                    </p>
-                    <p style={{ margin: 0, fontSize: 12, color: "#9ca3af" }}>
-                      {label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
+          {/* 3行目: アクションボタン */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
+            {isCompany && companyJobs.length > 0 && (
+              <ScoutButton
+                agentId={agent.id}
+                agentName={agent.name}
+                companyJobs={companyJobs}
+                scoutedJobIds={scoutedJobIds}
+              />
+            )}
+            {isOwner && (
+              <Link
+                href={`/agents/${agent.id}/edit`}
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  padding: "8px 16px",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 8,
+                  backgroundColor: "#ffffff",
+                  color: "#374151",
+                  textDecoration: "none",
+                }}
+              >
+                編集
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ── ポートフォリオ（仮） ── */}
-      <div style={{ backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 12, padding: "20px 24px" }}>
-        <h2 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600, color: "#374151" }}>ポートフォリオ</h2>
-        <p style={{ margin: 0, fontSize: 13, color: "#9ca3af" }}>ポートフォリオは Phase 1 で実装予定です。</p>
-      </div>
+      {/* ── スキルセクション ── */}
+      {agent.skills.length > 0 && (
+        <>
+          <div style={{ borderTop: "1px solid #f3f4f6", marginBottom: 32 }} />
+          <section style={{ marginBottom: 0 }}>
+            <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 600, color: "#111827" }}>
+              スキル
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {agent.skills.map((skill) => (
+                <span key={skill} style={{ fontSize: 13, padding: "6px 12px", backgroundColor: "#f3f4f6", borderRadius: 99, color: "#4b5563" }}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ── 実績セクション ── */}
+      <div style={{ borderTop: "1px solid #f3f4f6", margin: "32px 0" }} />
+      <section>
+        <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: "#111827" }}>
+          実績 (Track Record)
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          {stats.map(({ value, label, color }) => (
+            <div key={label} style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 20, textAlign: "center" }}>
+              <p style={{ margin: "0 0 4px", fontSize: 28, fontWeight: 700, color, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+                {value}
+              </p>
+              <p style={{ margin: 0, fontSize: 12, color: "#9ca3af" }}>
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── ポートフォリオセクション ── */}
+      <div style={{ borderTop: "1px solid #f3f4f6", margin: "32px 0" }} />
+      <section>
+        <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 600, color: "#111827" }}>
+          ポートフォリオ
+        </h2>
+        <p style={{ margin: 0, fontSize: 14, color: "#9ca3af" }}>
+          ポートフォリオはPhase 1で実装予定です。
+        </p>
+      </section>
+
     </div>
   );
 }
