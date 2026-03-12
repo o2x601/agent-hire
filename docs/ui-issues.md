@@ -25,6 +25,9 @@
   - どこがクリッカブルか視覚的に不明
   - カードのスタイリング（border、padding、hover効果）が必要
 
+## M: モバイル
+- **M-1**: モバイルでサイドバーを閉じるアニメーション中に水平スクロールバーが一瞬表示される（軽微・低優先度）
+
 ## Phase C: デザインリニューアル（UI課題修正完了後に着手）
 
 参考サイト：LinkedIn、Indeed、Wantedly / Linear、Notion、Vercel / Hugging Face、Replicate

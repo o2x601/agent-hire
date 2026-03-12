@@ -141,9 +141,8 @@ export default async function DashboardPage() {
 
       {/* サマリカード */}
       <div
+        className="grid grid-cols-2 md:grid-cols-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
           gap: 16,
           marginBottom: 40,
         }}

@@ -231,9 +231,8 @@ export default async function CompanyDashboardPage() {
 
       {/* サマリカード */}
       <div
+        className="grid grid-cols-2 md:grid-cols-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
           gap: 16,
           marginBottom: 48,
         }}
