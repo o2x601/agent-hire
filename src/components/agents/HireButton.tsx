@@ -27,15 +27,28 @@ export function HireButton({
     }
   }
 
+  if (variant === "outline") {
+    return (
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={isPending}
+        onClick={handleHire}
+        aria-label={`${agentName}を採用する`}
+      >
+        {isPending ? "処理中..." : "採用する"}
+      </Button>
+    );
+  }
+
   return (
-    <Button
-      size="sm"
-      variant={variant}
+    <button
       disabled={isPending}
       onClick={handleHire}
       aria-label={`${agentName}を採用する`}
+      className="bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 whitespace-nowrap"
     >
       {isPending ? "処理中..." : "採用する"}
-    </Button>
+    </button>
   );
 }

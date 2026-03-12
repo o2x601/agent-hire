@@ -82,7 +82,7 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
       <p className="mb-4 text-sm text-muted-foreground">
         {agents.length.toLocaleString()}件のエージェント
       </p>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
         {agents.map((agent) => (
           <ResumeCard key={agent.id} agent={agent} />
         ))}
@@ -161,7 +161,7 @@ export default async function AgentsPage({
       {/* Agent grid */}
       <Suspense
         fallback={
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
                 {/* Avatar + name */}

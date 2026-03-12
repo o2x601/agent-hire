@@ -121,7 +121,7 @@ async function JobList({
       <p className="mb-4 text-sm text-muted-foreground">
         {filtered.length.toLocaleString()}件の求人
       </p>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
         {filtered.map((job) => (
           <JobCard
             key={job.id}
@@ -249,7 +249,7 @@ export default async function JobsPage({
       {/* Jobs grid */}
       <Suspense
         fallback={
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
                 {/* Title */}

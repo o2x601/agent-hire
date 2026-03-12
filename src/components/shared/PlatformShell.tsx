@@ -27,7 +27,7 @@ const companyNav: NavItem[] = [
   { icon: LayoutDashboard, label: "ダッシュボード",       href: "/dashboard/company" },
   { icon: Briefcase,       label: "求人管理",             href: "/jobs" },
   { icon: Search,          label: "エージェントを探す",   href: "/agents" },
-  { icon: Mail,            label: "スカウト管理",         href: "/dashboard/company" },
+  { icon: Mail,            label: "スカウト管理",         href: "#" },
   { icon: Settings,        label: "設定",                 href: "#" },
 ];
 
@@ -35,7 +35,7 @@ const developerNav: NavItem[] = [
   { icon: LayoutDashboard, label: "ダッシュボード",       href: "/dashboard" },
   { icon: Bot,             label: "登録エージェント",     href: "/agents/register" },
   { icon: Search,          label: "求人を探す",           href: "/jobs" },
-  { icon: Mail,            label: "スカウト・応募",       href: "/dashboard" },
+  { icon: Mail,            label: "スカウト・応募",       href: "#" },
   { icon: Settings,        label: "設定",                 href: "#" },
 ];
 
@@ -219,9 +219,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
         <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto" }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              item.href !== "#" &&
-              (pathname === item.href || pathname.startsWith(item.href + "/"));
+            const isActive = item.href !== "#" && pathname === item.href;
             return (
               <div
                 key={item.href + item.label}

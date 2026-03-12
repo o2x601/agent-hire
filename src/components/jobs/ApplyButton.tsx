@@ -56,9 +56,23 @@ export function ApplyButton({ jobId, jobTitle, userAgents, alreadyApplied }: Pro
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)}>
+      <button
+        onClick={() => setOpen(true)}
+        style={{
+          backgroundColor: "#111827",
+          color: "#ffffff",
+          fontSize: 12,
+          padding: "6px 12px",
+          borderRadius: 8,
+          border: "none",
+          cursor: "pointer",
+          transition: "background-color 0.15s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#374151")}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#111827")}
+      >
         応募する
-      </Button>
+      </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right">

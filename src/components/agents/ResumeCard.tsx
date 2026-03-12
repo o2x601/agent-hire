@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { HireButton } from "@/components/agents/HireButton";
-import { TrackRecordBadge } from "@/components/agents/TrackRecordBadge";
 import type { Agent } from "@/schemas/agent";
 
 type ResumeCardProps = {
@@ -17,57 +16,60 @@ export function ResumeCard({ agent }: ResumeCardProps) {
     .toUpperCase()
     .slice(0, 2);
 
+  const tr = agent.track_record;
+  const stats: string[] = [];
+  if (tr?.uptime_percentage !== undefined)
+    stats.push(`稼働率 ${tr.uptime_percentage.toFixed(1)}%`);
+  if (tr?.total_processed !== undefined)
+    stats.push(`処理数 ${tr.total_processed.toLocaleString()}`);
+  if (tr?.avg_response_ms !== undefined)
+    stats.push(`応答 ${tr.avg_response_ms}ms`);
+
   return (
     <div
       style={{
+        backgroundColor: "#ffffff",
         border: "1px solid #e5e7eb",
         borderRadius: 12,
-        padding: 16,
-        marginBottom: 0,
-        background: "white",
-        position: "relative",
-        transition: "box-shadow 0.15s",
-        cursor: "default",
+        padding: 20,
+        cursor: "pointer",
+        transition: "border-color 150ms ease, box-shadow 150ms ease",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)")}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "#9ca3af";
+        e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "#e5e7eb";
+        e.currentTarget.style.boxShadow = "none";
+      }}
     >
-      {/* 認証済バッジ */}
-      {agent.is_verified && (
-        <div style={{ position: "absolute", top: 12, right: 12 }}>
-          <span style={{
-            fontSize: 11,
-            fontWeight: 600,
-            padding: "2px 8px",
-            background: "#f3f4f6",
-            borderRadius: 99,
-            color: "#374151",
-          }}>
-            認証済
-          </span>
-        </div>
-      )}
-
-      {/* ── ヘッダー行: アバター + 名前 ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* ── 上部: アバター + 名前 + 説明 ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         {/* アバター */}
-        <div style={{
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          background: "#e5e7eb",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 14,
-          fontWeight: 700,
-          color: "#374151",
-          flexShrink: 0,
-          overflow: "hidden",
-        }}>
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            backgroundColor: "#f3f4f6",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 18,
+            fontWeight: 600,
+            color: "#4b5563",
+            flexShrink: 0,
+            overflow: "hidden",
+          }}
+        >
           {agent.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img
+              src={agent.avatar_url}
+              alt={agent.name}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
           ) : (
             initials
           )}
@@ -78,8 +80,8 @@ export function ResumeCard({ agent }: ResumeCardProps) {
           <Link
             href={`/agents/${agent.id}`}
             style={{
-              fontWeight: 700,
-              fontSize: 15,
+              fontSize: 16,
+              fontWeight: 600,
               color: "#111827",
               textDecoration: "none",
               display: "block",
@@ -91,68 +93,113 @@ export function ResumeCard({ agent }: ResumeCardProps) {
             {agent.name}
           </Link>
           {agent.personality && (
-            <p style={{
-              fontSize: 12,
-              color: "#6b7280",
-              margin: "2px 0 0",
-              overflow: "hidden",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-            }}>
+            <p
+              style={{
+                fontSize: 14,
+                color: "#6b7280",
+                marginTop: 2,
+                overflow: "hidden",
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+              }}
+            >
               {agent.personality}
             </p>
           )}
         </div>
+
+        {/* 認証済バッジ */}
+        {agent.is_verified && (
+          <span
+            style={{
+              flexShrink: 0,
+              fontSize: 11,
+              fontWeight: 500,
+              color: "#6b7280",
+              backgroundColor: "#f3f4f6",
+              padding: "2px 8px",
+              borderRadius: 99,
+            }}
+          >
+            認証済
+          </span>
+        )}
       </div>
 
-      {/* ── スキルタグ ── */}
+      {/* ── 中部: スキルタグ ── */}
       {agent.skills.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 10 }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 6,
+            marginTop: 12,
+          }}
+        >
           {agent.skills.slice(0, 5).map((skill) => (
-            <span key={skill} style={{
-              fontSize: 11,
-              padding: "2px 8px",
-              border: "1px solid #d1d5db",
-              borderRadius: 99,
-              color: "#374151",
-              background: "white",
-            }}>
+            <span
+              key={skill}
+              style={{
+                backgroundColor: "#f3f4f6",
+                color: "#4b5563",
+                fontSize: 12,
+                padding: "4px 10px",
+                borderRadius: 99,
+              }}
+            >
               {skill}
             </span>
           ))}
           {agent.skills.length > 5 && (
-            <span style={{
-              fontSize: 11,
-              padding: "2px 8px",
-              border: "1px solid #d1d5db",
-              borderRadius: 99,
-              color: "#9ca3af",
-            }}>
+            <span
+              style={{
+                backgroundColor: "#f3f4f6",
+                color: "#9ca3af",
+                fontSize: 12,
+                padding: "4px 10px",
+                borderRadius: 99,
+              }}
+            >
               +{agent.skills.length - 5}
             </span>
           )}
         </div>
       )}
 
-      {/* ── 統計情報 ── */}
-      {agent.track_record && (
-        <div style={{ marginTop: 8 }}>
-          <TrackRecordBadge trackRecord={agent.track_record} />
-        </div>
-      )}
+      {/* ── 下部: 統計情報 + 料金 + ボタン ── */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 16,
+          paddingTop: 16,
+          borderTop: "1px solid #f3f4f6",
+        }}
+      >
+        {/* 統計情報 dot 区切り */}
+        <p
+          style={{
+            fontSize: 12,
+            color: "#9ca3af",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            flex: 1,
+            paddingRight: 8,
+          }}
+        >
+          {stats.length > 0 ? stats.join(" · ") : "実績データなし"}
+        </p>
 
-      {/* ── フッター: 料金 + ボタン ── */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: 12,
-      }}>
-        <span style={{ fontSize: 12, color: "#6b7280" }}>
-          {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
-        </span>
-        <HireButton agentId={agent.id} agentName={agent.name} />
+        {/* 料金タイプ + 採用ボタン */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <span style={{ fontSize: 12, color: "#6b7280" }}>
+            {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
+          </span>
+          <HireButton agentId={agent.id} agentName={agent.name} />
+        </div>
       </div>
     </div>
   );
