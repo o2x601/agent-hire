@@ -16,7 +16,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     { data: job, error },
     { data: { user } },
   ] = await Promise.all([
-    supabase.from("jobs").select("*, companies(name)").eq("id", id).single(),
+    supabase.from("jobs").select("company_id, *, companies(name)").eq("id", id).single(),
     supabase.auth.getUser(),
   ]);
 
