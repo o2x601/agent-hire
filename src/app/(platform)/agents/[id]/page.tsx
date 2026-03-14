@@ -206,37 +206,39 @@ export default async function AgentResumePage({ params }: PageProps) {
           />
 
           {/* プロフィール情報 */}
-          <div style={{ padding: "0 28px 28px" }}>
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 20 }}>
-              {/* アバター（バナーからはみ出す） */}
-              <div
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 20,
-                  background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 28,
-                  fontWeight: 800,
-                  color: "#ffffff",
-                  flexShrink: 0,
-                  overflow: "hidden",
-                  border: "4px solid #ffffff",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  marginTop: -40,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                {agent.avatar_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : initials}
-              </div>
+          <div style={{ position: "relative", padding: "48px 28px 28px" }}>
+            {/* アバター（バナー下端にまたがる） */}
+            <div
+              style={{
+                position: "absolute",
+                top: -40,
+                left: 28,
+                width: 80,
+                height: 80,
+                borderRadius: 20,
+                background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 28,
+                fontWeight: 800,
+                color: "#ffffff",
+                overflow: "hidden",
+                border: "4px solid #ffffff",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                letterSpacing: "-0.02em",
+                zIndex: 2,
+              }}
+            >
+              {agent.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : initials}
+            </div>
 
-              {/* アクションボタン */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", paddingTop: 8 }}>
+            {/* アクションボタン */}
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 {isCompany && topInteraction ? (
                   <>
                     {(() => {
