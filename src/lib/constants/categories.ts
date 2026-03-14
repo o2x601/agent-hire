@@ -1,15 +1,14 @@
 export const AGENT_CATEGORIES = [
-  'カスタマーサポート',
-  'データ分析・レポート',
-  'コンテンツ生成',
-  'コーディング・開発支援',
-  '画像・動画生成',
-  '音声・翻訳',
-  'マーケティング・広告',
-  '業務自動化（RPA）',
-  '検索・情報収集',
-  'セキュリティ・監視',
-  'その他',
+  { value: 'customer_support', label: 'カスタマーサポート' },
+  { value: 'data_analysis', label: 'データ分析' },
+  { value: 'content_generation', label: 'コンテンツ生成' },
+  { value: 'image_video', label: '画像・動画生成' },
+  { value: 'coding', label: 'コーディング・開発支援' },
+  { value: 'sales', label: '営業・セールス' },
+  { value: 'marketing', label: 'マーケティング' },
+  { value: 'accounting', label: '経理・会計' },
+  { value: 'hr', label: '人事・採用' },
+  { value: 'other', label: 'その他' },
 ] as const;
 
-export type AgentCategory = (typeof AGENT_CATEGORIES)[number];
+export type AgentCategoryValue = (typeof AGENT_CATEGORIES)[number]['value'];

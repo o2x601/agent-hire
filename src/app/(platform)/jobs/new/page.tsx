@@ -436,7 +436,7 @@ export default function NewJobPage() {
               >
                 <option value="">選択してください</option>
                 {AGENT_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat.value} value={cat.value}>{cat.label}</option>
                 ))}
               </select>
               {fieldErrors["category"] && (
