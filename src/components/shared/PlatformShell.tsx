@@ -33,7 +33,7 @@ const companyNav: NavItem[] = [
 
 const developerNav: NavItem[] = [
   { icon: LayoutDashboard, label: "ダッシュボード",       href: "/dashboard" },
-  { icon: Bot,             label: "登録エージェント",     href: "/agents/register" },
+  { icon: Bot,             label: "登録エージェント",     href: "/dashboard/agents/new" },
   { icon: Search,          label: "求人を探す",           href: "/jobs" },
   { icon: Mail,            label: "スカウト・応募",       href: "#" },
   { icon: Settings,        label: "設定",                 href: "#" },
