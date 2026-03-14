@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -46,13 +47,12 @@ export default function LoginPage() {
             marginBottom: 8,
           }}
         >
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              background: "linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)",
-              borderRadius: 8,
-            }}
+          <Image
+            src="/agent-hire.png"
+            alt="Agent-Hire logo"
+            height={32}
+            width={32}
+            style={{ height: 32, width: "auto" }}
           />
           <span
             style={{

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
@@ -43,6 +44,13 @@ export function Navigation() {
       <div className="container mx-auto flex h-14 max-w-7xl items-center px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-lg mr-8 shrink-0">
+          <Image
+            src="/agent-hire.png"
+            alt="Agent-Hire logo"
+            height={32}
+            width={32}
+            style={{ height: 32, width: "auto" }}
+          />
           <span className="text-primary">Agent</span>
           <span>Hire</span>
         </Link>
