@@ -24,6 +24,9 @@ export type Database = {
           pricing_model: "subscription" | "usage_based";
           api_endpoint: string | null;
           is_verified: boolean;
+          is_active: boolean;
+          last_health_check: string | null;
+          health_check_status: "healthy" | "degraded" | "unreachable" | "unknown";
           created_at: string;
           updated_at: string;
         };
@@ -38,6 +41,9 @@ export type Database = {
           pricing_model: "subscription" | "usage_based";
           api_endpoint?: string | null;
           is_verified?: boolean;
+          is_active?: boolean;
+          last_health_check?: string | null;
+          health_check_status?: "healthy" | "degraded" | "unreachable" | "unknown";
           created_at?: string;
           updated_at?: string;
         };

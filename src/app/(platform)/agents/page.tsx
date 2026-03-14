@@ -14,9 +14,10 @@ type SearchParams = {
 
 async function AgentList({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from("ai_agents")
     .select("*")
+    .eq("is_active", true) as any)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -106,7 +107,7 @@ export default async function AgentsPage({
     { data: agentsData },
   ] = await Promise.all([
     supabase.auth.getUser(),
-    supabase.from("ai_agents").select("skills"),
+    (supabase.from("ai_agents").select("skills") as any).eq("is_active", true),
   ]);
 
   const isCompany = user?.user_metadata?.role === "company";

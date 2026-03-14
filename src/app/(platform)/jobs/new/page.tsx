@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CreateJobSchema } from "@/schemas/job";
 import { AGENT_CATEGORIES } from "@/lib/constants/categories";
+import { JOB_TEMPLATES, type JobTemplate } from "@/lib/data/job-templates";
 import {
   Card,
   CardContent,
@@ -220,6 +221,18 @@ export default function NewJobPage() {
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  function applyTemplate(tpl: JobTemplate) {
+    setTitle(tpl.title);
+    setProblemStatement(tpl.problem_statement);
+    setCategory(tpl.category);
+    setRequiredSkills(tpl.required_specs.skills);
+    setPreferredSkills(tpl.required_specs.preferred_skills);
+    setBudgetMin(String(tpl.budget_range_min));
+    setBudgetMax(String(tpl.budget_range_max));
+    setFieldErrors({});
+    setGlobalError(null);
+  }
+
   /* ─── 送信 ─────────────────────────────────────────────────── */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -360,6 +373,66 @@ export default function NewJobPage() {
         <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
           「何ができるAIが欲しいか」を具体的に書くほど、最適なエージェントとマッチしやすくなります。
         </p>
+      </div>
+
+      {/* ── テンプレートセクション ──────────────────────────────── */}
+      <div style={{ marginBottom: 32 }}>
+        <p style={S.sectionLabel}>テンプレートから作成</p>
+        <p style={{ fontSize: 13, color: "var(--muted-foreground)", marginBottom: 12 }}>
+          クリックするとフォームに自動入力されます
+        </p>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: 10,
+          }}
+        >
+          {JOB_TEMPLATES.map((tpl) => {
+            const catLabel =
+              AGENT_CATEGORIES.find((c) => c.value === tpl.category)?.label ?? tpl.category;
+            return (
+              <button
+                key={tpl.title}
+                type="button"
+                onClick={() => applyTemplate(tpl)}
+                style={{
+                  textAlign: "left",
+                  padding: "12px 14px",
+                  background: "var(--card)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  transition: "border-color 0.15s, box-shadow 0.15s",
+                  fontFamily: "inherit",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--primary)";
+                  e.currentTarget.style.boxShadow = "0 0 0 1px var(--primary)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <p
+                  style={{
+                    margin: "0 0 4px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "var(--foreground)",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {tpl.title}
+                </p>
+                <p style={{ margin: 0, fontSize: 11, color: "var(--muted-foreground)" }}>
+                  {catLabel} · ¥{tpl.budget_range_min.toLocaleString()}〜
+                </p>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>

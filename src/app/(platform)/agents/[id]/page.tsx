@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ScoutButton } from "@/components/agents/ScoutButton";
+import { InterviewButton } from "@/components/agents/InterviewButton";
 import { createClient } from "@/lib/supabase/server";
 import type { Agent } from "@/schemas/agent";
 
@@ -163,6 +164,12 @@ export default async function AgentResumePage({ params }: PageProps) {
                 agentName={agent.name}
                 companyJobs={companyJobs}
                 scoutedJobIds={scoutedJobIds}
+              />
+            )}
+            {isCompany && agent.api_endpoint && (
+              <InterviewButton
+                agentId={agent.id}
+                jobId={companyJobs[0]?.id}
               />
             )}
             {isOwner && (
