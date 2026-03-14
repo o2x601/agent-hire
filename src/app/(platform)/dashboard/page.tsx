@@ -123,29 +123,7 @@ export default async function DashboardPage() {
           </div>
           <Link
             href="/dashboard/agents/new"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "10px 20px",
-              background: "#111827",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#ffffff",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              boxShadow: "0 2px 8px rgba(17,24,39,0.2)",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,24,39,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(17,24,39,0.2)";
-            }}
+            className="ah-primary-btn"
           >
             + 履歴書を作成
           </Link>

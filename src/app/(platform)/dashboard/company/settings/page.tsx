@@ -40,9 +40,8 @@ export default async function CompanySettingsPage() {
         <div style={{ marginBottom: 36 }}>
           <Link
             href="/dashboard/company"
-            style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20, fontWeight: 500 }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#6b7280")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#9ca3af")}
+            className="ah-back-link"
+          style={{ marginBottom: 20 }}
           >
             ← ダッシュボードに戻る
           </Link>

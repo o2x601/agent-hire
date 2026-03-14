@@ -193,29 +193,7 @@ export default async function CompanyDashboardPage() {
           </div>
           <Link
             href="/jobs/new"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "10px 20px",
-              background: "#111827",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#ffffff",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              boxShadow: "0 2px 8px rgba(17,24,39,0.2)",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,24,39,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(17,24,39,0.2)";
-            }}
+            className="ah-primary-btn"
           >
             + 求人を投稿
           </Link>
@@ -254,20 +232,7 @@ export default async function CompanyDashboardPage() {
                 return (
                   <div
                     key={job.id}
-                    style={{
-                      background: "#ffffff",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: 12,
-                      padding: "16px 20px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 16,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                      transition: "box-shadow 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.07)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)")}
+                    className="ah-list-card"
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>

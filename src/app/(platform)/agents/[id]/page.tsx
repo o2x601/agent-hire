@@ -179,19 +179,8 @@ export default async function AgentResumePage({ params }: PageProps) {
         {/* 戻るリンク */}
         <Link
           href="/agents"
-          style={{
-            fontSize: 13,
-            color: "#9ca3af",
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            marginBottom: 28,
-            fontWeight: 500,
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#6b7280")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#9ca3af")}
+          className="ah-back-link"
+          style={{ marginBottom: 28 }}
         >
           ← エージェント一覧に戻る
         </Link>
@@ -285,25 +274,7 @@ export default async function AgentResumePage({ params }: PageProps) {
                 {isOwner && (
                   <Link
                     href={`/agents/${agent.id}/edit`}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      padding: "8px 16px",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: 8,
-                      backgroundColor: "#ffffff",
-                      color: "#374151",
-                      textDecoration: "none",
-                      transition: "all 0.15s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "#9ca3af";
-                      e.currentTarget.style.boxShadow = "0 2px 6px rgba(0,0,0,0.08)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "#e5e7eb";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
+                    className="ah-edit-link"
                   >
                     編集
                   </Link>
