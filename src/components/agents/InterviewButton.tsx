@@ -36,11 +36,11 @@ export function InterviewButton({ interactionId }: Props) {
         onClick={handleClick}
         disabled={isPending}
         style={{
-          fontSize: 13,
-          fontWeight: 500,
-          padding: "6px 14px",
+          fontSize: 14,
+          fontWeight: 600,
+          padding: "8px 18px",
           border: "none",
-          borderRadius: 6,
+          borderRadius: 8,
           backgroundColor: isPending ? "#f3f4f6" : "#111827",
           color: isPending ? "#9ca3af" : "#ffffff",
           cursor: isPending ? "not-allowed" : "pointer",
