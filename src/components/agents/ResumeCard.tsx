@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HireButton } from "@/components/agents/HireButton";
 import type { Agent } from "@/schemas/agent";
 
@@ -9,6 +10,7 @@ type ResumeCardProps = {
 };
 
 export function ResumeCard({ agent }: ResumeCardProps) {
+  const router = useRouter();
   const initials = agent.name
     .split(" ")
     .map((w) => w[0])
@@ -27,6 +29,7 @@ export function ResumeCard({ agent }: ResumeCardProps) {
 
   return (
     <div
+      onClick={() => router.push(`/agents/${agent.id}`)}
       style={{
         backgroundColor: "#ffffff",
         border: "1px solid #e5e7eb",

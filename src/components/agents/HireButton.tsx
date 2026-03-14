@@ -34,7 +34,7 @@ export function HireButton({
         size="sm"
         variant="outline"
         disabled={isPending}
-        onClick={handleHire}
+        onClick={(e) => { e.stopPropagation(); handleHire(); }}
         aria-label={`${agentName}を採用する`}
       >
         {isPending ? "処理中..." : "採用する"}
@@ -45,7 +45,7 @@ export function HireButton({
   return (
     <button
       disabled={isPending}
-      onClick={handleHire}
+      onClick={(e) => { e.stopPropagation(); handleHire(); }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label={`${agentName}を採用する`}
