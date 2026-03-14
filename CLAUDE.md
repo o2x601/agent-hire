@@ -43,12 +43,11 @@ Agent-Hireの解決策：
 
 ## Tech Stack
 - **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS, Framer Motion
-- **Backend**: Next.js API Routes + Supabase
-- **DB**: Supabase (PostgreSQL 15) — supabase/postgres:15.8.1.020
-- **Auth**: Supabase GoTrue (supabase/gotrue:v2.164.0)
-- **API Gateway**: Kong 2.8.1
-- **Realtime**: Supabase Realtime v2.34.47
-- **Storage**: Supabase Storage v1.11.13
+- **Backend**: Next.js API Routes + Supabase / Server Actions
+- **DB**: PostgreSQL (Supabase Cloud Free Tier)
+- **Auth**: Supabase Auth (GoTrue)
+- **Infrastructure**: VPS (Ubuntu, XServer 8GB) + Coolify でデプロイ。Supabase は Cloud Free Tier を使用。
+- **面接機能**: Next.js Server Actions で実装（FastAPI不要）
 
 ## Project Structure
 ```
@@ -64,21 +63,7 @@ agent-hire/
 │       ├── shared/           # 共通コンポーネント
 │       └── ui/               # shadcn/ui ベース
 ├── supabase/
-│   ├── migrations/           # DBマイグレーション
-│   └── init/                 # Docker初期化スクリプト
-└── docker-compose.yml
-```
-
-## DB Schema (主要テーブル)
-- `public.companies` — 企業プロファイル (user_id → auth.users)
-- `public.ai_agents` — AIエージェント履歴書
-- `public.jobs` — 求人票
-- `public.interactions` — 応募・スカウト・面接のやりとり
-
-## Docker 起動
-```bash
-cd ~/agent-hire
-docker compose --env-file .env.docker up -d
+│   └── migrations/           # DBマイグレーション
 ```
 
 ## Dev Commands
@@ -88,35 +73,106 @@ npm run build  # プロダクションビルド
 npm run lint   # ESLint
 ```
 
-## Trust & Verification（信頼性担保）
+---
 
-### エージェント（AIサービス）側
-- Level 1（MVP）: APIエンドポイントにhealthcheck → 「接続確認済み」バッジ自動付与
-- Level 2（Phase 2）: プラットフォームが定期的にAPI計測 → 稼働率・応答速度を客観数値で表示
-- Level 3（Phase 3）: 運営による手動レビュー → 「公式認定」バッジ
+## Data Model
 
-### 企業側
-- Level 1（MVP）: メールドメイン判定 → フリーメールなら「未認証」、独自ドメインなら「ドメイン認証済み」バッジ
-- Level 2（Phase 2）: 法人番号照合（国税庁API）→ 「法人確認済み」バッジ
-- Level 3（Phase 3）: 運営による手動レビュー
+### agent_category ENUM
+```
+'customer_support', 'data_analysis', 'content_generation', 'coding',
+'image_video', 'voice_translation', 'marketing', 'rpa',
+'search_intelligence', 'security_monitoring', 'other'
+```
 
-### MVP最低限の実装
-- 報告機能（「このアカウントを報告」ボタン）
-- エージェント: 「未検証」/「接続確認済み」バッジ表示
-- 企業: 「フリーメール」/「独自ドメイン」区分表示
+### ai_agents（主要カラム）
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | UUID | PK |
+| developer_id | UUID | auth.users FK |
+| name | TEXT | エージェント名 |
+| category | agent_category ENUM | エージェントカテゴリ |
+| skills | TEXT[] | スキルタグ |
+| pricing_model | TEXT | 'subscription' / 'usage_based' |
+| api_endpoint | TEXT | healthcheck対象URL |
+| is_active | BOOLEAN | 死活監視フラグ。3日連続unreachableで自動false |
+| last_health_check | TIMESTAMPTZ | 最終Health Check日時 |
+| health_check_status | TEXT | 'healthy' / 'degraded' / 'unreachable' / 'unknown' |
+| monthly_salary_jpy | INTEGER | 月給表記用（NULL可） |
+| track_record | JSONB | 実績データ（稼働率・応答速度等） |
 
-### 個人ユーザー対応（Post-MVP）
-- 現在は企業のみ（B2Bマーケットプレイス）
-- ユーザー増加後に「個人・フリーランス」ロールを追加予定
-- 個人向けは月額制、企業向けは従量制で料金モデルを分離
+### companies（主要カラム）
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | UUID | PK |
+| user_id | UUID | auth.users FK |
+| name | TEXT | 企業名 |
+
+### jobs（主要カラム）
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | UUID | PK |
+| company_id | UUID | companies FK |
+| title | TEXT | 求人タイトル |
+| category | agent_category ENUM | カテゴリ |
+| problem_statement | TEXT | 解決したい課題 |
+| budget_range | int4range | 予算範囲 |
+| required_specs | JSONB | スキル要件 |
+
+### interactions（主要カラム）
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | UUID | PK |
+| agent_id | UUID | ai_agents FK |
+| job_id | UUID | jobs FK |
+| status | TEXT ENUM | 'pending' / 'rejected' / 'interviewing' / 'probation' / 'hired' |
+| test_result | JSONB | 面接（Health Check）結果 |
+
+---
+
+## MVP Phases
+
+### Phase 1（現行）
+- エージェント履歴書 CRUD
+- 求人票 CRUD
+- 応募・スカウト（interactions）
+- **面接機能**: Server Actions による Health Check（api_endpoint へ fetch → status + response_time 計測 → interactions.test_result に JSONB 保存）
+- **定期 Health Check**: 1日1回 CRON → is_active 管理 → 3日連続 unreachable で自動休職
+- **求人票テンプレート**: JD Templates（8〜10個のプリセット求人票）
+- **probation ステータス**: 試用期間（採用後に probation → 本採用で hired）
+- **月給表記への統一**: UIテキスト（料金→月給、稼働率→出勤率、エラー率→欠勤率）
+- Trust & Verification Level 1（バッジ表示）
+
+### Phase 2
+- LLM 統合（履歴書自動生成、求人票自動整形）のみに FastAPI を使用
+- 法人番号照合（国税庁API）
+- 高度な検索・フィルタリング
+
+### Phase 3
+- 運営による手動審査バッジ
+- 個人・フリーランスロール対応
+- 料金モデル分離（個人: 月額制 / 企業: 従量制）
+
+---
+
+## HR Metaphor UI Guidelines
+
+UIテキストは以下のHRメタファーに統一する:
+
+| 技術用語 | HR表記 |
+|---|---|
+| 月額料金 | 月給 |
+| API接続テスト | 面接 |
+| 契約開始 | 採用 |
+| エラー率 | 欠勤率 |
+| 応答速度 | 反応速度 |
+| 稼働率 | 出勤率 |
+| is_active=false | 休職中 |
+| Verified | 身元確認済み |
+| probation | 試用期間 |
 
 ---
 
 ## Trust & Verification（信頼性担保）
-
-### 概要
-Agent-Hireはエージェント・企業双方の信頼性を段階的に担保する仕組みを持つ。
-MVPでは最低限の機能のみ実装し、Post-MVPで拡充する。
 
 ### エージェント側 信頼性レベル
 - **Level 1 - 接続確認済みバッジ**: healthcheckエンドポイントへの疎通確認が取れたエージェントに付与
@@ -136,3 +192,14 @@ MVPでは最低限の機能のみ実装し、Post-MVPで拡充する。
 ### スコープ
 - 現在はB2Bのみ（企業 ↔ AIエージェント開発者）
 - 個人ユーザー向け機能はPost-MVP
+
+---
+
+## Production Environment
+
+- **URL**: https://agent-hire.solvan.jp
+- **API Proxy**: https://api.agent-hire.solvan.jp（VPS上のCaddy → supabase-kong。Supabase Cloud移行後は不要）
+- **Supabase**: https://ubwlorhnsjkmypkipyka.supabase.co
+- **Deploy**: Coolify (Nixpacks) → GitHub main push後に手動Deploy
+- **環境変数**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL`
+- **TypeScript**: `ignoreBuildErrors=true`（MVP段階。型生成整備後に解除）
