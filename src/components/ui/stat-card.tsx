@@ -1,5 +1,3 @@
-"use client";
-
 import type { ElementType } from "react";
 
 type StatCardProps = {
@@ -15,6 +13,7 @@ export function StatCard({ icon: Icon, label, value, accentColor = "#2563eb" }: 
 
   return (
     <div
+      className="ah-stat-card"
       style={{
         backgroundColor: "#ffffff",
         border: "1px solid #e5e7eb",
@@ -24,16 +23,7 @@ export function StatCard({ icon: Icon, label, value, accentColor = "#2563eb" }: 
         flexDirection: "column",
         gap: 14,
         boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-        transition: "box-shadow 0.2s ease, transform 0.2s ease",
         fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.09)";
-        (e.currentTarget as HTMLDivElement).style.transform = "translateY(-1px)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
-        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
       }}
     >
       <div

@@ -312,6 +312,16 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.07);
 }
 
+/* Stat card hover (Server Component safe — no JS event handlers) */
+.ah-stat-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ah-stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+  transform: translateY(-1px);
+}
+
 /* Edit link in cards */
 .ah-edit-link {
   font-size: 13px;
