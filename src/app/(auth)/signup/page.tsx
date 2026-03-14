@@ -49,7 +49,7 @@ export default function SignupPage() {
       password,
       options: {
         data: { role },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`,
       },
     });
 
