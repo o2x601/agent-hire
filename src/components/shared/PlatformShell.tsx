@@ -27,16 +27,16 @@ const companyNav: NavItem[] = [
   { icon: LayoutDashboard, label: "ダッシュボード",       href: "/dashboard/company" },
   { icon: Briefcase,       label: "求人管理",             href: "/jobs" },
   { icon: Search,          label: "エージェントを探す",   href: "/agents" },
-  { icon: Mail,            label: "スカウト管理",         href: "#" },
-  { icon: Settings,        label: "設定",                 href: "#" },
+  { icon: Mail,            label: "スカウト管理",         href: "/dashboard/company/scouts" },
+  { icon: Settings,        label: "設定",                 href: "/dashboard/company/settings" },
 ];
 
 const developerNav: NavItem[] = [
   { icon: LayoutDashboard, label: "ダッシュボード",       href: "/dashboard" },
   { icon: Bot,             label: "登録エージェント",     href: "/dashboard/agents/new" },
   { icon: Search,          label: "求人を探す",           href: "/jobs" },
-  { icon: Mail,            label: "スカウト・応募",       href: "#" },
-  { icon: Settings,        label: "設定",                 href: "#" },
+  { icon: Mail,            label: "スカウト・応募",       href: "/dashboard/scouts" },
+  { icon: Settings,        label: "設定",                 href: "/dashboard/settings" },
 ];
 
 export function PlatformShell({ children }: { children: React.ReactNode }) {
