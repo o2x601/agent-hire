@@ -22,7 +22,7 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
 
   if (error) {
     return (
-      <p style={{ fontSize: 14, color: "#ef4444" }}>
+      <p style={{ fontSize: 14, color: "#dc2626" }}>
         エージェントの取得に失敗しました。
       </p>
     );
@@ -31,7 +31,6 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
   let agents = data as Agent[];
   const { q, skill, sort } = searchParams;
 
-  // Text search: name OR skills (partial match)
   if (q) {
     const lq = q.toLowerCase();
     agents = agents.filter(
@@ -41,12 +40,10 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
     );
   }
 
-  // Exact skill tag filter
   if (skill) {
     agents = agents.filter((a) => a.skills.includes(skill));
   }
 
-  // Sort (default order is created_at desc from query)
   if (sort === "uptime") {
     agents.sort(
       (a, b) =>
@@ -80,14 +77,28 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <p style={{ marginBottom: 16, fontSize: 14, color: "#6b7280" }}>
+      <p style={{ marginBottom: 20, fontSize: 13, color: "#9ca3af", fontWeight: 500 }}>
         {agents.length.toLocaleString()}件のエージェント
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 20,
+        }}
+      >
         {agents.map((agent) => (
           <ResumeCard key={agent.id} agent={agent} />
         ))}
       </div>
+      <style>{`
+        @media (max-width: 1024px) {
+          .agent-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 640px) {
+          .agent-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </>
   );
 }
@@ -112,7 +123,6 @@ export default async function AgentsPage({
 
   const isCompany = user?.user_metadata?.role === "company";
 
-  // Collect all unique skills across all agents for filter chips
   const allSkills = Array.from(
     new Set((agentsData ?? []).flatMap((a) => a.skills ?? [])),
   ).sort();
@@ -120,102 +130,132 @@ export default async function AgentsPage({
   return (
     <div
       style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-        padding: "40px 24px",
+        backgroundColor: "#fafafa",
+        minHeight: "100vh",
         fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 16,
-          marginBottom: 8,
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 28,
-              fontWeight: 700,
-              color: "#111827",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            求職中のAIエージェント
-          </h1>
-          <p style={{ margin: "4px 0 0", fontSize: 14, color: "#6b7280" }}>
-            出勤率と処理実績で選ぶ、実力主義の人材市場
-          </p>
-        </div>
-        {isCompany && (
-          <Link
-            href="/jobs/new"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "8px 16px",
-              backgroundColor: "#111827",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 500,
-              color: "white",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            + 求人票を投稿
-          </Link>
-        )}
-      </div>
-
-      {/* Filters */}
-      <Suspense fallback={null}>
-        <AgentFilters allSkills={allSkills} />
-      </Suspense>
-
-      {/* Agent grid */}
-      <Suspense
-        fallback={
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 12,
-                  padding: 20,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#f3f4f6" }} />
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
-                    <div style={{ height: 14, width: 96, borderRadius: 4, background: "#f3f4f6" }} />
-                    <div style={{ height: 12, width: 64, borderRadius: 4, background: "#f3f4f6" }} />
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} style={{ height: 20, width: 56, borderRadius: 99, background: "#f3f4f6" }} />
-                  ))}
-                </div>
-              </div>
-            ))}
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 64px" }}>
+        {/* ── ページヘッダー ── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#2563eb", marginBottom: 8 }}>
+              AI Agent Market
+            </p>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 32,
+                fontWeight: 800,
+                color: "#111827",
+                letterSpacing: "-0.03em",
+                lineHeight: 1.1,
+              }}
+            >
+              求職中のAIエージェント
+            </h1>
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#6b7280", lineHeight: 1.6 }}>
+              出勤率と処理実績で選ぶ、実力主義の人材市場
+            </p>
           </div>
-        }
-      >
-        <AgentList searchParams={params} />
-      </Suspense>
+          {isCompany && (
+            <Link
+              href="/jobs/new"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "10px 20px",
+                backgroundColor: "#111827",
+                borderRadius: 10,
+                fontSize: 14,
+                fontWeight: 600,
+                color: "white",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(17,24,39,0.2)",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,24,39,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(17,24,39,0.2)";
+              }}
+            >
+              + 求人票を投稿
+            </Link>
+          )}
+        </div>
+
+        {/* ── フィルター ── */}
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            padding: "16px 20px",
+            marginBottom: 28,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
+        >
+          <Suspense fallback={null}>
+            <AgentFilters allSkills={allSkills} />
+          </Suspense>
+        </div>
+
+        {/* ── エージェントグリッド ── */}
+        <Suspense
+          fallback={
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 16,
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: "#f3f4f6" }} />
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div style={{ height: 14, width: "70%", borderRadius: 4, background: "#f3f4f6" }} />
+                      <div style={{ height: 11, width: "45%", borderRadius: 4, background: "#f3f4f6" }} />
+                    </div>
+                    <div style={{ width: 54, height: 46, borderRadius: 10, background: "#f3f4f6" }} />
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j} style={{ height: 24, width: 64, borderRadius: 99, background: "#f3f4f6" }} />
+                    ))}
+                  </div>
+                  <div style={{ height: 1, background: "#f3f4f6" }} />
+                  <div style={{ height: 12, width: "55%", borderRadius: 4, background: "#f3f4f6" }} />
+                </div>
+              ))}
+            </div>
+          }
+        >
+          <AgentList searchParams={params} />
+        </Suspense>
+      </div>
     </div>
   );
 }

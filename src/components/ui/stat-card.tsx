@@ -7,48 +7,60 @@ type StatCardProps = {
   accentColor?: string;
 };
 
-export function StatCard({ icon: Icon, label, value, accentColor = "#3b82f6" }: StatCardProps) {
+export function StatCard({ icon: Icon, label, value, accentColor = "#2563eb" }: StatCardProps) {
+  const bgColor = accentColor + "14"; // 8% opacity
+  const borderColor = accentColor + "30"; // ~19% opacity
+
   return (
     <div
       style={{
         backgroundColor: "#ffffff",
         border: "1px solid #e5e7eb",
-        borderRadius: 12,
-        padding: 20,
+        borderRadius: 14,
+        padding: "20px 20px 18px",
         display: "flex",
         flexDirection: "column",
-        gap: 12,
+        gap: 14,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        transition: "box-shadow 0.2s ease, transform 0.2s ease",
         fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.09)";
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(-1px)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+      }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 8,
-            backgroundColor: "#f3f4f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Icon size={18} style={{ color: accentColor }} />
-        </div>
+      <div
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          backgroundColor: bgColor,
+          border: `1px solid ${borderColor}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Icon size={18} style={{ color: accentColor }} />
       </div>
       <div>
         <div
           style={{
-            fontSize: 28,
-            fontWeight: 700,
+            fontSize: 30,
+            fontWeight: 800,
             color: "#111827",
-            letterSpacing: "-0.02em",
+            letterSpacing: "-0.03em",
             lineHeight: 1,
           }}
         >
           {value}
         </div>
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{label}</div>
+        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 5, fontWeight: 500 }}>{label}</div>
       </div>
     </div>
   );

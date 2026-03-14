@@ -16,7 +16,6 @@ type SearchParams = {
   sort?: string;
 };
 
-// budgetのmin値を安全に取得
 function getBudgetMin(budgetRange: unknown): number {
   if (!budgetRange || typeof budgetRange !== "object") return 0;
   const b = budgetRange as Record<string, unknown>;
@@ -55,7 +54,7 @@ async function JobList({
 
   if (error) {
     return (
-      <p style={{ fontSize: 14, color: "#ef4444" }}>求人の取得に失敗しました。</p>
+      <p style={{ fontSize: 14, color: "#dc2626" }}>求人の取得に失敗しました。</p>
     );
   }
 
@@ -66,7 +65,6 @@ async function JobList({
   let filtered = (jobs ?? []) as JobRow[];
   const { q, skill, sort } = searchParams;
 
-  // テキスト検索
   if (q) {
     const lq = q.toLowerCase();
     filtered = filtered.filter((job) => {
@@ -80,7 +78,6 @@ async function JobList({
     });
   }
 
-  // スキルフィルタ
   if (skill) {
     filtered = filtered.filter((job) => {
       const specs = RequiredSpecsSchema.safeParse(job.required_specs);
@@ -93,7 +90,6 @@ async function JobList({
     });
   }
 
-  // ソート
   if (sort === "budget_asc") {
     filtered.sort(
       (a, b) => getBudgetMin(a.budget_range) - getBudgetMin(b.budget_range),
@@ -103,7 +99,6 @@ async function JobList({
       (a, b) => getBudgetMax(b.budget_range) - getBudgetMax(a.budget_range),
     );
   }
-  // newest: すでにcreated_at descでクエリ済み
 
   if (filtered.length === 0) {
     return (
@@ -118,10 +113,10 @@ async function JobList({
 
   return (
     <>
-      <p style={{ marginBottom: 16, fontSize: 14, color: "#6b7280" }}>
+      <p style={{ marginBottom: 20, fontSize: 13, color: "#9ca3af", fontWeight: 500 }}>
         {filtered.length.toLocaleString()}件の求人
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
         {filtered.map((job) => (
           <JobCard
             key={job.id}
@@ -160,7 +155,6 @@ export default async function JobsPage({
   const isCompany = role === "company";
   const isDeveloper = role === "developer";
 
-  // 企業ロール: 自社のcompany_idを取得
   let userCompanyId: string | null = null;
   let userAgents: AgentOption[] = [];
   let appliedJobIds = new Set<string>();
@@ -192,7 +186,6 @@ export default async function JobsPage({
     }
   }
 
-  // フィルタ用スキル一覧（全求人から収集）
   const allSkills = Array.from(
     new Set(
       (allJobsData ?? []).flatMap((job) => {
@@ -209,104 +202,132 @@ export default async function JobsPage({
   return (
     <div
       style={{
-        maxWidth: 1280,
-        margin: "0 auto",
-        padding: "32px 24px",
+        backgroundColor: "#fafafa",
+        minHeight: "100vh",
         fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 16,
-          marginBottom: 8,
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 28,
-              fontWeight: 700,
-              color: "#111827",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            AIエージェント求人
-          </h1>
-          <p style={{ margin: "4px 0 0", fontSize: 14, color: "#6b7280" }}>
-            企業が求めるAIエージェントのスペックで応募できる
-          </p>
-        </div>
-        {isCompany && (
-          <Link
-            href="/jobs/new"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "8px 16px",
-              backgroundColor: "#111827",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 500,
-              color: "white",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            + 求人票を投稿
-          </Link>
-        )}
-      </div>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 64px" }}>
 
-      {/* Filters */}
-      <Suspense fallback={null}>
-        <JobFilters allSkills={allSkills} />
-      </Suspense>
-
-      {/* Jobs grid */}
-      <Suspense
-        fallback={
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 12,
-                  padding: 20,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                }}
-              >
-                <div style={{ height: 16, width: "75%", borderRadius: 4, background: "#f3f4f6" }} />
-                <div style={{ height: 14, width: "50%", borderRadius: 4, background: "#f3f4f6" }} />
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} style={{ height: 20, width: 56, borderRadius: 99, background: "#f3f4f6" }} />
-                  ))}
-                </div>
-                <div style={{ height: 16, width: 112, borderRadius: 4, background: "#f3f4f6", marginTop: "auto" }} />
-              </div>
-            ))}
+        {/* ── ページヘッダー ── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#2563eb", marginBottom: 8 }}>
+              Job Listings
+            </p>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 32,
+                fontWeight: 800,
+                color: "#111827",
+                letterSpacing: "-0.03em",
+                lineHeight: 1.1,
+              }}
+            >
+              AIエージェント求人
+            </h1>
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#6b7280", lineHeight: 1.6 }}>
+              企業が求めるスペックで応募できる、スキルマッチング型の求人市場
+            </p>
           </div>
-        }
-      >
-        <JobList
-          searchParams={params}
-          userCompanyId={userCompanyId}
-          isDeveloper={isDeveloper}
-          userAgents={userAgents}
-          appliedJobIds={appliedJobIds}
-        />
-      </Suspense>
+          {isCompany && (
+            <Link
+              href="/jobs/new"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "10px 20px",
+                backgroundColor: "#111827",
+                borderRadius: 10,
+                fontSize: 14,
+                fontWeight: 600,
+                color: "white",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(17,24,39,0.2)",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,24,39,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(17,24,39,0.2)";
+              }}
+            >
+              + 求人票を投稿
+            </Link>
+          )}
+        </div>
+
+        {/* ── フィルター ── */}
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            padding: "16px 20px",
+            marginBottom: 28,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
+        >
+          <Suspense fallback={null}>
+            <JobFilters allSkills={allSkills} />
+          </Suspense>
+        </div>
+
+        {/* ── 求人グリッド ── */}
+        <Suspense
+          fallback={
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 16,
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  }}
+                >
+                  <div style={{ height: 16, width: "75%", borderRadius: 4, background: "#f3f4f6" }} />
+                  <div style={{ height: 12, width: "50%", borderRadius: 4, background: "#f3f4f6" }} />
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j} style={{ height: 22, width: 60, borderRadius: 99, background: "#f3f4f6" }} />
+                    ))}
+                  </div>
+                  <div style={{ height: 14, width: "40%", borderRadius: 4, background: "#f3f4f6", marginTop: "auto" }} />
+                </div>
+              ))}
+            </div>
+          }
+        >
+          <JobList
+            searchParams={params}
+            userCompanyId={userCompanyId}
+            isDeveloper={isDeveloper}
+            userAgents={userAgents}
+            appliedJobIds={appliedJobIds}
+          />
+        </Suspense>
+      </div>
     </div>
   );
 }

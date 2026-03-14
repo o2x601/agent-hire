@@ -8,6 +8,20 @@ type ResumeCardProps = {
   agent: Agent;
 };
 
+const CATEGORY_LABELS: Record<string, string> = {
+  customer_support: "カスタマーサポート",
+  data_analysis: "データ分析",
+  content_generation: "コンテンツ生成",
+  coding: "コーディング",
+  image_video: "画像・動画",
+  voice_translation: "音声・翻訳",
+  marketing: "マーケティング",
+  rpa: "RPA",
+  search_intelligence: "検索・インテリジェンス",
+  security_monitoring: "セキュリティ監視",
+  other: "その他",
+};
+
 export function ResumeCard({ agent }: ResumeCardProps) {
   const initials = agent.name
     .split(" ")
@@ -17,54 +31,44 @@ export function ResumeCard({ agent }: ResumeCardProps) {
     .slice(0, 2);
 
   const tr = agent.track_record;
-  const stats: string[] = [];
-  if (tr?.uptime_percentage !== undefined)
-    stats.push(`出勤率 ${tr.uptime_percentage.toFixed(1)}%`);
-  if (tr?.total_processed !== undefined)
-    stats.push(`処理数 ${tr.total_processed.toLocaleString()}`);
-  if (tr?.avg_response_ms !== undefined)
-    stats.push(`反応速度 ${tr.avg_response_ms}ms`);
+
+  const uptimeColor =
+    !tr ? "#9ca3af"
+    : tr.uptime_percentage >= 99 ? "#059669"
+    : tr.uptime_percentage >= 95 ? "#d97706"
+    : "#dc2626";
+
+  const uptimeBg =
+    !tr ? "#f3f4f6"
+    : tr.uptime_percentage >= 99 ? "#ecfdf5"
+    : tr.uptime_percentage >= 95 ? "#fffbeb"
+    : "#fef2f2";
+
+  const categoryLabel = agent.category ? (CATEGORY_LABELS[agent.category] ?? agent.category) : null;
 
   return (
     <Link
       href={`/agents/${agent.id}`}
-      style={{
-        display: "block",
-        textDecoration: "none",
-        backgroundColor: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 12,
-        padding: 20,
-        cursor: "pointer",
-        transition: "border-color 150ms ease, box-shadow 150ms ease",
-        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "#9ca3af";
-        e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "#e5e7eb";
-        e.currentTarget.style.boxShadow = "none";
-      }}
+      className="agent-card-link"
     >
-      {/* ── 上部: アバター + 名前 + 説明 ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+      {/* ── ヘッダー: アバター + 名前 + カテゴリ ── */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 14 }}>
         {/* アバター */}
         <div
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: "50%",
-            backgroundColor: "#f3f4f6",
+            width: 52,
+            height: 52,
+            borderRadius: 14,
+            background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 18,
-            fontWeight: 600,
-            color: "#4b5563",
+            fontWeight: 700,
+            color: "#ffffff",
             flexShrink: 0,
             overflow: "hidden",
+            letterSpacing: "-0.02em",
           }}
         >
           {agent.avatar_url ? (
@@ -79,130 +83,132 @@ export function ResumeCard({ agent }: ResumeCardProps) {
           )}
         </div>
 
-        {/* 名前 + 説明 */}
+        {/* 名前 + メタ情報 */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <span
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: "#111827",
-              display: "block",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {agent.name}
-          </span>
-          {agent.personality && (
-            <p
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 3 }}>
+            <span
               style={{
-                fontSize: 14,
-                color: "#6b7280",
-                marginTop: 2,
+                fontSize: 15,
+                fontWeight: 700,
+                color: "#111827",
                 overflow: "hidden",
-                display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                letterSpacing: "-0.01em",
               }}
             >
-              {agent.personality}
-            </p>
-          )}
+              {agent.name}
+            </span>
+            {agent.is_verified && (
+              <span style={{ fontSize: 10, fontWeight: 600, color: "#059669", background: "#ecfdf5", border: "1px solid #a7f3d0", padding: "1px 7px", borderRadius: 99 }}>
+                認証済
+              </span>
+            )}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+            {categoryLabel && (
+              <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 500 }}>{categoryLabel}</span>
+            )}
+            {categoryLabel && (
+              <span style={{ fontSize: 11, color: "#d1d5db" }}>·</span>
+            )}
+            <span style={{ fontSize: 11, color: "#9ca3af" }}>
+              {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
+            </span>
+          </div>
         </div>
 
-        {/* 認証済バッジ */}
-        {agent.is_verified && (
-          <span
+        {/* 出勤率バッジ */}
+        {tr && (
+          <div
             style={{
               flexShrink: 0,
-              fontSize: 11,
-              fontWeight: 500,
-              color: "#6b7280",
-              backgroundColor: "#f3f4f6",
-              padding: "2px 8px",
-              borderRadius: 99,
+              textAlign: "center",
+              background: uptimeBg,
+              border: `1px solid ${uptimeColor}40`,
+              borderRadius: 10,
+              padding: "6px 10px",
             }}
           >
-            認証済
-          </span>
+            <div style={{ fontSize: 15, fontWeight: 800, color: uptimeColor, letterSpacing: "-0.02em", lineHeight: 1 }}>
+              {tr.uptime_percentage.toFixed(1)}%
+            </div>
+            <div style={{ fontSize: 9, color: uptimeColor, opacity: 0.8, marginTop: 2, fontWeight: 600, letterSpacing: "0.04em" }}>
+              出勤率
+            </div>
+          </div>
         )}
       </div>
 
-      {/* ── 中部: スキルタグ ── */}
-      {agent.skills.length > 0 && (
-        <div
+      {/* ── 説明文 ── */}
+      {agent.personality && (
+        <p
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 6,
-            marginTop: 12,
+            fontSize: 13,
+            color: "#6b7280",
+            lineHeight: 1.55,
+            marginBottom: 14,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
           }}
         >
-          {agent.skills.slice(0, 5).map((skill) => (
-            <span
-              key={skill}
-              style={{
-                backgroundColor: "#f3f4f6",
-                color: "#4b5563",
-                fontSize: 12,
-                padding: "4px 10px",
-                borderRadius: 99,
-              }}
-            >
+          {agent.personality}
+        </p>
+      )}
+
+      {/* ── スキルタグ ── */}
+      {agent.skills.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+          {agent.skills.slice(0, 4).map((skill) => (
+            <span key={skill} className="ah-skill-pill">
               {skill}
             </span>
           ))}
-          {agent.skills.length > 5 && (
-            <span
-              style={{
-                backgroundColor: "#f3f4f6",
-                color: "#9ca3af",
-                fontSize: 12,
-                padding: "4px 10px",
-                borderRadius: 99,
-              }}
-            >
-              +{agent.skills.length - 5}
+          {agent.skills.length > 4 && (
+            <span style={{ fontSize: 12, color: "#9ca3af", padding: "4px 8px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 999 }}>
+              +{agent.skills.length - 4}
             </span>
           )}
         </div>
       )}
 
-      {/* ── 下部: 統計情報 + 料金 + ボタン ── */}
+      {/* ── フッター: 統計 + ボタン ── */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: 16,
-          paddingTop: 16,
+          paddingTop: 14,
           borderTop: "1px solid #f3f4f6",
         }}
       >
-        {/* 統計情報 dot 区切り */}
-        <p
-          style={{
-            fontSize: 12,
-            color: "#9ca3af",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            flex: 1,
-            paddingRight: 8,
-          }}
-        >
-          {stats.length > 0 ? stats.join(" · ") : "実績データなし"}
-        </p>
+        {/* 統計情報 */}
+        <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+          {tr?.total_processed !== undefined && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", letterSpacing: "-0.01em" }}>
+                {tr.total_processed.toLocaleString()}
+              </div>
+              <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 1 }}>総処理数</div>
+            </div>
+          )}
+          {tr?.avg_response_ms !== undefined && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", letterSpacing: "-0.01em" }}>
+                {tr.avg_response_ms}ms
+              </div>
+              <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 1 }}>反応速度</div>
+            </div>
+          )}
+          {!tr && (
+            <span style={{ fontSize: 12, color: "#d1d5db" }}>実績データなし</span>
+          )}
+        </div>
 
-        {/* 料金タイプ + 採用ボタン */}
-        <div
-          style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}
-          onClick={(e) => e.preventDefault()}
-        >
-          <span style={{ fontSize: 12, color: "#6b7280" }}>
-            {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
-          </span>
+        {/* 採用ボタン */}
+        <div onClick={(e) => e.preventDefault()}>
           <HireButton agentId={agent.id} agentName={agent.name} />
         </div>
       </div>

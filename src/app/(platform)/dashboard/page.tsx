@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Bot, Mail, Zap, CheckCircle2 } from "lucide-react";
 import { ScoutResponseButton } from "@/components/dashboard/ScoutResponseButton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatCard } from "@/components/ui/stat-card";
 
 type ScoutRow = {
   id: string;
@@ -28,7 +29,6 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  // 自分のエージェントを取得
   const { data: agentsData } = await supabase
     .from("ai_agents")
     .select("id, name")
@@ -38,7 +38,6 @@ export default async function DashboardPage() {
   const agentIds = agents.map((a) => a.id);
   const agentMap = new Map(agents.map((a) => [a.id, a.name]));
 
-  // スカウト受信一覧を取得
   let scouts: ScoutRow[] = [];
   let scoutJobMap = new Map<string, string>();
   let scoutJobCompanyMap = new Map<string, string>();
@@ -81,239 +80,226 @@ export default async function DashboardPage() {
 
   const pendingScouts = scouts.filter((s) => s.status === "pending");
   const pastScouts = scouts.filter((s) => s.status !== "pending");
+  const interviewingCount = scouts.filter((s) => s.status === "interviewing").length;
+  const hiredCount = scouts.filter((s) => s.status === "hired").length;
+
+  const metrics = [
+    { label: "登録済みAIエージェント", value: agents.length, Icon: Bot,          accentColor: "#2563eb" },
+    { label: "受け取ったスカウト",     value: scouts.length,  Icon: Mail,         accentColor: "#7c3aed" },
+    { label: "進行中の面接",           value: interviewingCount, Icon: Zap,        accentColor: "#d97706" },
+    { label: "成立した契約",           value: hiredCount,     Icon: CheckCircle2, accentColor: "#059669" },
+  ];
 
   return (
     <div
       style={{
-        padding: "48px 24px",
-        maxWidth: 960,
-        margin: "0 auto",
+        backgroundColor: "#fafafa",
+        minHeight: "100vh",
         fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
-      <div style={{ marginBottom: 32, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
-        <div>
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--primary)",
-              marginBottom: 8,
-            }}
-          >
-            Dashboard
-          </p>
-          <h1
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              color: "var(--foreground)",
-              letterSpacing: "-0.02em",
-              margin: 0,
-            }}
-          >
-            ようこそ 👋
-          </h1>
-          <p style={{ color: "var(--muted-foreground)", fontSize: 14, marginTop: 8 }}>
-            {user.email}
-          </p>
-        </div>
-        <Link
-          href="/dashboard/agents/new"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "10px 20px",
-            background: "#111827",
-            borderRadius: 10,
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#ffffff",
-            textDecoration: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
-          + 履歴書を作成
-        </Link>
-      </div>
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "48px 24px 64px" }}>
 
-      {/* サマリカード */}
-      {(() => {
-        const interviewingCount = scouts.filter((s) => s.status === "interviewing").length;
-        const hiredCount = scouts.filter((s) => s.status === "hired").length;
-        const metrics = [
-          { label: "登録済みAIエージェント", value: agents.length, Icon: Bot,          accentColor: "#3b82f6" },
-          { label: "受け取ったスカウト",     value: scouts.length,  Icon: Mail,         accentColor: "#8b5cf6" },
-          { label: "進行中の面接",           value: interviewingCount, Icon: Zap,        accentColor: "#f59e0b" },
-          { label: "成立した契約",           value: hiredCount,     Icon: CheckCircle2, accentColor: "#10b981" },
-        ];
-        return (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
-            {metrics.map(({ label, value, Icon }) => {
-              return (
-                <div
-                  key={label}
-                  style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Icon size={18} style={{ color: "#9ca3af" }} />
-                    </div>
-                    <span style={{ fontSize: 11, color: "#9ca3af", backgroundColor: "#f3f4f6", padding: "2px 8px", borderRadius: 99 }}>前週比 —</span>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1 }}>{value}</div>
-                    <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{label}</div>
-                  </div>
-                </div>
-              );
-            })}
+        {/* ── ページヘッダー ── */}
+        <div style={{ marginBottom: 36, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#2563eb", marginBottom: 8 }}>
+              Developer Dashboard
+            </p>
+            <h1
+              style={{
+                fontSize: 30,
+                fontWeight: 800,
+                color: "#111827",
+                letterSpacing: "-0.03em",
+                margin: "0 0 6px",
+              }}
+            >
+              ようこそ
+            </h1>
+            <p style={{ color: "#9ca3af", fontSize: 13, margin: 0, fontWeight: 500 }}>
+              {user.email}
+            </p>
           </div>
-        );
-      })()}
-
-      {/* スカウト受信一覧 */}
-      {scouts.length > 0 && (
-        <div>
-          <h2
+          <Link
+            href="/dashboard/agents/new"
             style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: "var(--foreground)",
-              marginBottom: 16,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "10px 20px",
+              background: "#111827",
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 600,
+              color: "#ffffff",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              boxShadow: "0 2px 8px rgba(17,24,39,0.2)",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-1px)";
+              e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,24,39,0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 2px 8px rgba(17,24,39,0.2)";
             }}
           >
-            📨 スカウト一覧
-          </h2>
-
-          {/* 未対応スカウト */}
-          {pendingScouts.length > 0 && (
-            <div style={{ marginBottom: 32 }}>
-              <p style={{ fontSize: 12, color: "var(--primary)", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                返答待ち
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {pendingScouts.map((scout) => {
-                  const message = getFirstMessage(scout.chat_log);
-                  return (
-                    <div
-                      key={scout.id}
-                      style={{
-                        background: "var(--card)",
-                        border: "1px solid var(--border)",
-                        borderRadius: 12,
-                        padding: 20,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: 16,
-                      }}
-                    >
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>
-                            {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
-                          </span>
-                          <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>←</span>
-                          <span style={{ fontSize: 13, color: "var(--muted-foreground)" }}>
-                            {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
-                          </span>
-                        </div>
-                        <p style={{ fontSize: 13, color: "var(--primary)", marginBottom: 6 }}>
-                          求人: {scoutJobMap.get(scout.job_id) ?? "不明な求人"}
-                        </p>
-                        {message && (
-                          <p style={{ fontSize: 13, color: "var(--muted-foreground)", lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                            {message}
-                          </p>
-                        )}
-                        <p style={{ fontSize: 11, color: "var(--muted-foreground)", opacity: 0.6, marginTop: 6 }}>
-                          {new Date(scout.created_at).toLocaleDateString("ja-JP")}
-                        </p>
-                      </div>
-                      <div style={{ flexShrink: 0 }}>
-                        <ScoutResponseButton interactionId={scout.id} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* 対応済みスカウト */}
-          {pastScouts.length > 0 && (
-            <div>
-              <p style={{ fontSize: 12, color: "var(--muted-foreground)", fontWeight: 600, marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                対応済み
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {pastScouts.map((scout) => {
-                  const statusLabel =
-                    scout.status === "interviewing"
-                      ? "承諾"
-                      : scout.status === "rejected"
-                        ? "辞退"
-                        : scout.status === "hired"
-                          ? "採用"
-                          : scout.status;
-                  const statusColor =
-                    scout.status === "interviewing" || scout.status === "hired"
-                      ? "#22c55e"
-                      : "var(--destructive)";
-
-                  return (
-                    <div
-                      key={scout.id}
-                      style={{
-                        background: "var(--card)",
-                        border: "1px solid var(--border)",
-                        borderRadius: 12,
-                        padding: 16,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 16,
-                        opacity: 0.7,
-                      }}
-                    >
-                      <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>
-                            {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
-                          </span>
-                          <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>←</span>
-                          <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
-                            {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
-                          </span>
-                        </div>
-                        <p style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>
-                          {scoutJobMap.get(scout.job_id) ?? "不明な求人"} ·{" "}
-                          {new Date(scout.created_at).toLocaleDateString("ja-JP")}
-                        </p>
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: statusColor, flexShrink: 0 }}>
-                        {statusLabel}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            + 履歴書を作成
+          </Link>
         </div>
-      )}
 
-      {scouts.length === 0 && agents.length > 0 && (
-        <EmptyState
-          icon="📨"
-          title="まだスカウトが届いていません"
-          description="エージェントの実績を充実させてスカウトを待ちましょう"
-        />
-      )}
+        {/* ── サマリカード (4列グリッド) ── */}
+        <div className="ah-stat-grid" style={{ marginBottom: 48 }}>
+          {metrics.map(({ label, value, Icon, accentColor }) => (
+            <StatCard key={label} icon={Icon} label={label} value={value} accentColor={accentColor} />
+          ))}
+        </div>
+
+        {/* ── エージェント未登録 ── */}
+        {agents.length === 0 && (
+          <EmptyState
+            icon="🤖"
+            title="まだAIエージェントを登録していません"
+            description="AIの履歴書を作成して、企業からのスカウトを待ちましょう"
+            action={{ label: "履歴書を作成する", href: "/dashboard/agents/new" }}
+          />
+        )}
+
+        {/* ── スカウト一覧 ── */}
+        {scouts.length > 0 && (
+          <div>
+            {/* 未対応スカウト */}
+            {pendingScouts.length > 0 && (
+              <div style={{ marginBottom: 40 }}>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ width: 3, height: 18, background: "#d97706", borderRadius: 2, display: "inline-block" }} />
+                  返答待ちのスカウト
+                  <span style={{ fontSize: 12, fontWeight: 600, background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", padding: "2px 9px", borderRadius: 99 }}>
+                    {pendingScouts.length}件
+                  </span>
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {pendingScouts.map((scout) => {
+                    const message = getFirstMessage(scout.chat_log);
+                    return (
+                      <div
+                        key={scout.id}
+                        style={{
+                          background: "#ffffff",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 14,
+                          padding: 20,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          gap: 16,
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                          transition: "box-shadow 0.2s ease",
+                        }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>
+                              {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
+                            </span>
+                            <span style={{ fontSize: 12, color: "#d1d5db" }}>←</span>
+                            <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 500 }}>
+                              {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 13, color: "#2563eb", marginBottom: 6, fontWeight: 500 }}>
+                            {scoutJobMap.get(scout.job_id) ?? "不明な求人"}
+                          </p>
+                          {message && (
+                            <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.55, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                              {message}
+                            </p>
+                          )}
+                          <p style={{ fontSize: 11, color: "#d1d5db", marginTop: 8 }}>
+                            {new Date(scout.created_at).toLocaleDateString("ja-JP")}
+                          </p>
+                        </div>
+                        <div style={{ flexShrink: 0 }}>
+                          <ScoutResponseButton interactionId={scout.id} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 対応済みスカウト */}
+            {pastScouts.length > 0 && (
+              <div>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ width: 3, height: 18, background: "#9ca3af", borderRadius: 2, display: "inline-block" }} />
+                  対応済みのスカウト
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {pastScouts.map((scout) => {
+                    const statusLabel =
+                      scout.status === "interviewing" ? "承諾"
+                      : scout.status === "rejected" ? "辞退"
+                      : scout.status === "hired" ? "採用"
+                      : scout.status;
+                    const isPositive = scout.status === "interviewing" || scout.status === "hired";
+                    const statusColor = isPositive ? "#059669" : "#dc2626";
+                    const statusBg = isPositive ? "#ecfdf5" : "#fef2f2";
+                    const statusBorder = isPositive ? "#a7f3d0" : "#fecaca";
+
+                    return (
+                      <div
+                        key={scout.id}
+                        style={{
+                          background: "#ffffff",
+                          border: "1px solid #f3f4f6",
+                          borderRadius: 12,
+                          padding: "14px 18px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap: 16,
+                          opacity: 0.8,
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>
+                              {agentMap.get(scout.agent_id) ?? "不明なエージェント"}
+                            </span>
+                            <span style={{ fontSize: 11, color: "#d1d5db" }}>←</span>
+                            <span style={{ fontSize: 12, color: "#9ca3af" }}>
+                              {scoutJobCompanyMap.get(scout.job_id) ?? "不明な企業"}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 3 }}>
+                            {scoutJobMap.get(scout.job_id) ?? "不明な求人"} · {new Date(scout.created_at).toLocaleDateString("ja-JP")}
+                          </p>
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: statusColor, background: statusBg, border: `1px solid ${statusBorder}`, padding: "3px 10px", borderRadius: 99, flexShrink: 0 }}>
+                          {statusLabel}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {scouts.length === 0 && agents.length > 0 && (
+          <EmptyState
+            icon="📨"
+            title="まだスカウトが届いていません"
+            description="エージェントの実績を充実させてスカウトを待ちましょう"
+          />
+        )}
+      </div>
     </div>
   );
 }
