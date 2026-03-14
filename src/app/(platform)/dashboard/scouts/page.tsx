@@ -171,7 +171,7 @@ export default function DeveloperScoutsPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: "48px 24px", maxWidth: 860, margin: "0 auto", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+      <div style={{ padding: "48px 24px", maxWidth: 860, margin: "0 auto", fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif" }}>
         <p style={{ color: "#9ca3af", fontSize: 14 }}>読み込み中...</p>
       </div>
     );
@@ -183,7 +183,7 @@ export default function DeveloperScoutsPage() {
         padding: "48px 24px",
         maxWidth: 860,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
       {/* Header */}

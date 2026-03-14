@@ -22,7 +22,7 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
 
   if (error) {
     return (
-      <p className="text-destructive text-sm">
+      <p style={{ fontSize: 14, color: "#ef4444" }}>
         エージェントの取得に失敗しました。
       </p>
     );
@@ -80,10 +80,10 @@ async function AgentList({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <p className="mb-4 text-sm text-muted-foreground">
+      <p style={{ marginBottom: 16, fontSize: 14, color: "#6b7280" }}>
         {agents.length.toLocaleString()}件のエージェント
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
         {agents.map((agent) => (
           <ResumeCard key={agent.id} agent={agent} />
         ))}
@@ -118,15 +118,38 @@ export default async function AgentsPage({
   ).sort();
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
+    <div
+      style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: "40px 24px",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
+      }}
+    >
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+          marginBottom: 8,
+        }}
+      >
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            求職中のエージェント
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 28,
+              fontWeight: 700,
+              color: "#111827",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            求職中のAIエージェント
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            フォロワー数ではなく、稼働率と処理実績で選ぶ
+          <p style={{ margin: "4px 0 0", fontSize: 14, color: "#6b7280" }}>
+            出勤率と処理実績で選ぶ、実力主義の人材市場
           </p>
         </div>
         {isCompany && (
@@ -152,37 +175,39 @@ export default async function AgentsPage({
         )}
       </div>
 
-      {/* Filters — requires Suspense because AgentFilters uses useSearchParams */}
-      <div className="mb-6">
-        <Suspense fallback={null}>
-          <AgentFilters allSkills={allSkills} />
-        </Suspense>
-      </div>
+      {/* Filters */}
+      <Suspense fallback={null}>
+        <AgentFilters allSkills={allSkills} />
+      </Suspense>
 
       {/* Agent grid */}
       <Suspense
         fallback={
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
-                {/* Avatar + name */}
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
-                  <div className="flex flex-col gap-1.5 flex-1">
-                    <div className="h-3.5 w-24 rounded bg-muted animate-pulse" />
-                    <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+              <div
+                key={i}
+                style={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#f3f4f6" }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+                    <div style={{ height: 14, width: 96, borderRadius: 4, background: "#f3f4f6" }} />
+                    <div style={{ height: 12, width: 64, borderRadius: 4, background: "#f3f4f6" }} />
                   </div>
                 </div>
-                {/* Skills */}
-                <div className="flex gap-1.5 flex-wrap">
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} className="h-5 w-14 rounded-full bg-muted animate-pulse" />
+                    <div key={j} style={{ height: 20, width: 56, borderRadius: 99, background: "#f3f4f6" }} />
                   ))}
-                </div>
-                {/* Stats */}
-                <div className="flex gap-2 pt-1">
-                  <div className="h-4 w-20 rounded bg-muted animate-pulse" />
-                  <div className="h-4 w-16 rounded bg-muted animate-pulse" />
                 </div>
               </div>
             ))}

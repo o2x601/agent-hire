@@ -11,7 +11,7 @@ export default function AuthLayout({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
         WebkitFontSmoothing: "antialiased",
       }}
     >

@@ -338,7 +338,7 @@ export default function NewJobPage() {
         padding: "48px 24px 96px",
         maxWidth: 720,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
         WebkitFontSmoothing: "antialiased",
       }}
     >

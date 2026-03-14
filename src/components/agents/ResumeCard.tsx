@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { HireButton } from "@/components/agents/HireButton";
 import type { Agent } from "@/schemas/agent";
 
@@ -10,7 +9,6 @@ type ResumeCardProps = {
 };
 
 export function ResumeCard({ agent }: ResumeCardProps) {
-  const router = useRouter();
   const initials = agent.name
     .split(" ")
     .map((w) => w[0])
@@ -21,22 +19,25 @@ export function ResumeCard({ agent }: ResumeCardProps) {
   const tr = agent.track_record;
   const stats: string[] = [];
   if (tr?.uptime_percentage !== undefined)
-    stats.push(`稼働率 ${tr.uptime_percentage.toFixed(1)}%`);
+    stats.push(`出勤率 ${tr.uptime_percentage.toFixed(1)}%`);
   if (tr?.total_processed !== undefined)
     stats.push(`処理数 ${tr.total_processed.toLocaleString()}`);
   if (tr?.avg_response_ms !== undefined)
-    stats.push(`応答 ${tr.avg_response_ms}ms`);
+    stats.push(`反応速度 ${tr.avg_response_ms}ms`);
 
   return (
-    <div
-      onClick={() => router.push(`/agents/${agent.id}`)}
+    <Link
+      href={`/agents/${agent.id}`}
       style={{
+        display: "block",
+        textDecoration: "none",
         backgroundColor: "#ffffff",
         border: "1px solid #e5e7eb",
         borderRadius: 12,
         padding: 20,
         cursor: "pointer",
         transition: "border-color 150ms ease, box-shadow 150ms ease",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = "#9ca3af";
@@ -80,13 +81,11 @@ export function ResumeCard({ agent }: ResumeCardProps) {
 
         {/* 名前 + 説明 */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <Link
-            href={`/agents/${agent.id}`}
+          <span
             style={{
               fontSize: 16,
               fontWeight: 600,
               color: "#111827",
-              textDecoration: "none",
               display: "block",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -94,7 +93,7 @@ export function ResumeCard({ agent }: ResumeCardProps) {
             }}
           >
             {agent.name}
-          </Link>
+          </span>
           {agent.personality && (
             <p
               style={{
@@ -197,13 +196,16 @@ export function ResumeCard({ agent }: ResumeCardProps) {
         </p>
 
         {/* 料金タイプ + 採用ボタン */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}
+          onClick={(e) => e.preventDefault()}
+        >
           <span style={{ fontSize: 12, color: "#6b7280" }}>
             {agent.pricing_model === "subscription" ? "月額制" : "従量制"}
           </span>
           <HireButton agentId={agent.id} agentName={agent.name} />
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

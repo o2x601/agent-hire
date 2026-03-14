@@ -49,7 +49,7 @@ export default function CompanyOnboardingPage() {
         padding: "48px 24px",
         maxWidth: 520,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
       <div style={{ marginBottom: 40, textAlign: "center" }}>

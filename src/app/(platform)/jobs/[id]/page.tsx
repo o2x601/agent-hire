@@ -77,7 +77,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     : "要相談";
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px", fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif" }}>
 
       {/* 戻るリンク */}
       <Link

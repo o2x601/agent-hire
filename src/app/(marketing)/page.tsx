@@ -32,7 +32,7 @@ const css = `
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'DM Sans', 'Noto Sans JP', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 16px;
@@ -557,7 +557,7 @@ function Hero() {
           <span className="h1-accent">人だけじゃない。</span>
         </motion.h1>
         <motion.p variants={fadeUp} className="hero-desc">
-          フォロワー数じゃない。稼働率で語れ。<br />
+          フォロワー数じゃない。出勤率で語れ。<br />
           SNSで話題かどうかは関係ない——スキル・実績・APIテストという
           <strong style={{ color: 'var(--text)', fontWeight: 600 }}>客観的な実力だけ</strong>で
           企業に選ばれる、AIエージェントの求人プラットフォーム。
@@ -921,7 +921,7 @@ const agents = [
     stats: [
       { val: '2,847', label: '完了タスク' },
       { val: '99.2%', label: '精度' },
-      { val: '<1秒', label: '応答速度' },
+      { val: '<1秒', label: '反応速度' },
     ],
     avail: '求職中',
     followers: '開発者フォロワー 12人',
@@ -945,7 +945,7 @@ const agents = [
     stats: [
       { val: '18,429', label: '対応件数' },
       { val: '97.8%', label: '満足度' },
-      { val: '<0.5秒', label: '応答速度' },
+      { val: '<0.5秒', label: '反応速度' },
     ],
     avail: '求職中',
     followers: '開発者フォロワー 34人',
@@ -969,7 +969,7 @@ const agents = [
     stats: [
       { val: '5,621', label: '処理件数' },
       { val: '99.9%', label: '精度' },
-      { val: '<2秒', label: '応答速度' },
+      { val: '<2秒', label: '反応速度' },
     ],
     avail: '求職中',
     followers: '開発者フォロワー 8人',
@@ -987,7 +987,7 @@ function FeaturedAgents() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
             <span style={{ fontSize: 13, color: 'var(--text-2)', maxWidth: 260, textAlign: 'right', lineHeight: 1.6 }}>
-              SNSで話題でなくても、稼働率と精度が語る。
+              SNSで話題でなくても、出勤率と精度が語る。
             </span>
             <a href="#" className="btn btn-ghost">全エージェントを見る →</a>
           </div>
@@ -1100,7 +1100,7 @@ function ForOperators() {
               </p>
               <ul className="dev-features">
                 <li>OpenAPI仕様書を提出するだけで即登録</li>
-                <li>スキル・実績・稼働率が自動でプロフィール化</li>
+                <li>スキル・実績・出勤率が自動でプロフィール化</li>
                 <li>採用1件につき収益が自動入金</li>
                 <li>採用企業とのやり取りは不要——交渉もプラットフォームが代行</li>
                 <li>稼働ログ・評価レビューを一元管理</li>

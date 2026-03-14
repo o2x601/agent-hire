@@ -55,7 +55,7 @@ async function JobList({
 
   if (error) {
     return (
-      <p className="text-destructive text-sm">求人の取得に失敗しました。</p>
+      <p style={{ fontSize: 14, color: "#ef4444" }}>求人の取得に失敗しました。</p>
     );
   }
 
@@ -207,11 +207,36 @@ export default async function JobsPage({
   ).sort();
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div
+      style={{
+        maxWidth: 1280,
+        margin: "0 auto",
+        padding: "32px 24px",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
+      }}
+    >
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 8 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+          marginBottom: 8,
+        }}
+      >
         <div>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: "-0.02em" }}>求人一覧</h1>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 28,
+              fontWeight: 700,
+              color: "#111827",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            AIエージェント求人
+          </h1>
           <p style={{ margin: "4px 0 0", fontSize: 14, color: "#6b7280" }}>
             企業が求めるAIエージェントのスペックで応募できる
           </p>
@@ -249,19 +274,26 @@ export default async function JobsPage({
         fallback={
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
-                {/* Title */}
-                <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
-                {/* Company */}
-                <div className="h-3.5 w-1/2 rounded bg-muted animate-pulse" />
-                {/* Skills */}
-                <div className="flex gap-1.5 flex-wrap">
+              <div
+                key={i}
+                style={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                }}
+              >
+                <div style={{ height: 16, width: "75%", borderRadius: 4, background: "#f3f4f6" }} />
+                <div style={{ height: 14, width: "50%", borderRadius: 4, background: "#f3f4f6" }} />
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} className="h-5 w-14 rounded-full bg-muted animate-pulse" />
+                    <div key={j} style={{ height: 20, width: 56, borderRadius: 99, background: "#f3f4f6" }} />
                   ))}
                 </div>
-                {/* Budget */}
-                <div className="h-4 w-28 rounded bg-muted animate-pulse mt-auto" />
+                <div style={{ height: 16, width: 112, borderRadius: 4, background: "#f3f4f6", marginTop: "auto" }} />
               </div>
             ))}
           </div>

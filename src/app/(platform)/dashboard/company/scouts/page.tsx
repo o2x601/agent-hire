@@ -87,7 +87,7 @@ export default async function CompanyScoutsPage() {
         padding: "48px 24px",
         maxWidth: 860,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
       {/* Header */}

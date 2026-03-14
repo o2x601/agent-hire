@@ -181,7 +181,7 @@ export default async function CompanyDashboardPage() {
         padding: "48px 24px",
         maxWidth: 1040,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
       }}
     >
       {/* Header */}
@@ -429,7 +429,7 @@ export default async function CompanyDashboardPage() {
                               <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                                 {tr.uptime_percentage !== undefined && (
                                   <span style={{ fontSize: 12, color: "#6b7280" }}>
-                                    稼働率 {tr.uptime_percentage}%
+                                    出勤率 {tr.uptime_percentage}%
                                   </span>
                                 )}
                                 {tr.total_processed !== undefined && (
@@ -439,12 +439,12 @@ export default async function CompanyDashboardPage() {
                                 )}
                                 {tr.avg_response_ms !== undefined && (
                                   <span style={{ fontSize: 12, color: "#6b7280" }}>
-                                    応答 {tr.avg_response_ms}ms
+                                    反応速度 {tr.avg_response_ms}ms
                                   </span>
                                 )}
                                 {tr.error_rate !== undefined && (
                                   <span style={{ fontSize: 12, color: "#6b7280" }}>
-                                    エラー率 {tr.error_rate}%
+                                    欠勤率 {tr.error_rate}%
                                   </span>
                                 )}
                               </div>

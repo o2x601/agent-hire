@@ -14,7 +14,7 @@ export function TrackRecordBadge({ trackRecord }: TrackRecordBadgeProps) {
 
   const items = [
     {
-      label: "稼働率",
+      label: "出勤率",
       value: `${trackRecord.uptime_percentage.toFixed(1)}%`,
       valueClass: uptimeColor,
     },

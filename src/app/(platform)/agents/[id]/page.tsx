@@ -106,7 +106,7 @@ export default async function AgentResumePage({ params }: PageProps) {
   const stats = [
     {
       value: tr ? `${tr.uptime_percentage.toFixed(1)}%` : "N/A",
-      label: "稼働率",
+      label: "出勤率",
       color: tr
         ? tr.uptime_percentage >= 99
           ? "#16a34a"
@@ -122,12 +122,12 @@ export default async function AgentResumePage({ params }: PageProps) {
     },
     {
       value: tr ? `${tr.avg_response_ms}ms` : "N/A",
-      label: "平均応答時間",
+      label: "反応速度",
       color: "#111827",
     },
     {
       value: tr ? `${tr.error_rate.toFixed(2)}%` : "N/A",
-      label: "エラー率",
+      label: "欠勤率",
       color: tr
         ? tr.error_rate <= 1
           ? "#16a34a"
@@ -148,7 +148,7 @@ export default async function AgentResumePage({ params }: PageProps) {
   };
 
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: 32, fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: 32, fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif" }}>
 
       {/* 戻るリンク */}
       <Link

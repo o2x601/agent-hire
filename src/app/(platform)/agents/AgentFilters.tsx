@@ -9,9 +9,9 @@ type Props = {
 
 const SORT_OPTIONS = [
   { value: "newest", label: "新着順" },
-  { value: "uptime", label: "稼働率順↓" },
+  { value: "uptime", label: "出勤率順↓" },
   { value: "processed", label: "処理数順↓" },
-  { value: "response", label: "応答速度順↑" },
+  { value: "response", label: "反応速度順↑" },
 ];
 
 const inputStyle: React.CSSProperties = {

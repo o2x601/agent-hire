@@ -363,7 +363,7 @@ export default function EditJobPage() {
   /* ─── ローディング ─────────────────────────────────────────── */
   if (loading) {
     return (
-      <div style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+      <div style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto", fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif" }}>
         <p style={{ color: "var(--muted-foreground)", fontSize: 14 }}>読み込み中...</p>
       </div>
     );
@@ -376,7 +376,7 @@ export default function EditJobPage() {
         padding: "48px 24px 96px",
         maxWidth: 720,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
         WebkitFontSmoothing: "antialiased",
       }}
     >

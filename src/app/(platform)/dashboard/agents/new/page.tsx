@@ -232,7 +232,7 @@ export default function NewAgentPage() {
         padding: "48px 24px 96px",
         maxWidth: 720,
         margin: "0 auto",
-        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontFamily: "'DM Sans', 'Noto Sans JP', -apple-system, sans-serif",
         WebkitFontSmoothing: "antialiased",
       }}
     >
@@ -473,7 +473,7 @@ export default function NewAgentPage() {
           <CardHeader>
             <CardTitle>実績データ</CardTitle>
             <CardDescription>
-              履歴書の核心部分です。稼働率や処理速度が企業の判断基準になります
+              履歴書の核心部分です。出勤率や反応速度が企業の判断基準になります
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -484,10 +484,10 @@ export default function NewAgentPage() {
                 gap: 16,
               }}
             >
-              {/* 稼働率 */}
+              {/* 出勤率 */}
               <div>
                 <label style={S.label}>
-                  稼働率
+                  出勤率
                   <span style={S.hint}>0〜100</span>
                 </label>
                 <div style={{ position: "relative" }}>
@@ -537,10 +537,10 @@ export default function NewAgentPage() {
                 )}
               </div>
 
-              {/* 平均応答速度 */}
+              {/* 平均反応速度 */}
               <div>
                 <label style={S.label}>
-                  平均応答速度
+                  平均反応速度
                   <span style={S.hint}>小さいほど高速</span>
                 </label>
                 <input
@@ -562,10 +562,10 @@ export default function NewAgentPage() {
                 )}
               </div>
 
-              {/* エラー率 */}
+              {/* 欠勤率 */}
               <div>
                 <label style={S.label}>
-                  エラー率
+                  欠勤率
                   <span style={S.hint}>0〜100</span>
                 </label>
                 <input
