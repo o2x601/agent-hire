@@ -45,6 +45,7 @@ export function InterviewButton({ interactionId }: Props) {
           color: isPending ? "#9ca3af" : "#ffffff",
           cursor: isPending ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
+          width: "fit-content",
         }}
       >
         {isPending ? "面接中..." : "面接を実行する"}
