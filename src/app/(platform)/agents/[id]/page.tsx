@@ -139,12 +139,12 @@ export default async function AgentResumePage({ params }: PageProps) {
   ];
 
   // 企業向けステータス表示の定義
-  const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
-    pending:      { label: "スカウト送信済み（返答待ち）", color: "#4b5563", bg: "#f3f4f6" },
-    interviewing: { label: "面接可能",                   color: "#4b5563", bg: "#f3f4f6" },
-    probation:    { label: "試用期間中",                  color: "#4b5563", bg: "#f3f4f6" },
-    hired:        { label: "採用済み",                   color: "#4b5563", bg: "#f3f4f6" },
-    rejected:     { label: "不採用",                     color: "#4b5563", bg: "#f3f4f6" },
+  const statusConfig: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    pending:      { label: "スカウト送信済み（返答待ち）", color: "#92400e", bg: "#fef3c7", border: "1px solid #fde68a" },
+    interviewing: { label: "面接可能",                   color: "#1d4ed8", bg: "#eff6ff", border: "1px solid #bfdbfe" },
+    probation:    { label: "試用期間中",                  color: "#6d28d9", bg: "#f5f3ff", border: "1px solid #ddd6fe" },
+    hired:        { label: "採用済み",                   color: "#15803d", bg: "#f0fdf4", border: "1px solid #bbf7d0" },
+    rejected:     { label: "不採用",                     color: "#b91c1c", bg: "#fef2f2", border: "1px solid #fecaca" },
   };
 
   return (
@@ -218,6 +218,7 @@ export default async function AgentResumePage({ params }: PageProps) {
                       fontWeight: 500,
                       color: cfg.color,
                       backgroundColor: cfg.bg,
+                      border: cfg.border,
                       padding: "3px 8px",
                       borderRadius: 99,
                     }}>
