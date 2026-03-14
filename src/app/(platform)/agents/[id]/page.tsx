@@ -214,13 +214,13 @@ export default async function AgentResumePage({ params }: PageProps) {
                   if (!cfg) return null;
                   return (
                     <span style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 500,
                       color: cfg.color,
                       backgroundColor: cfg.bg,
                       border: cfg.border,
-                      padding: "3px 8px",
-                      borderRadius: 99,
+                      padding: "6px 12px",
+                      borderRadius: 6,
                     }}>
                       {cfg.label}
                     </span>
