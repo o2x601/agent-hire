@@ -79,8 +79,8 @@ const S = {
   } as React.CSSProperties,
   textareaWrapper: {
     background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: 10,
+    border: "1px solid #e5e7eb",
+    borderRadius: 8,
     overflow: "hidden",
     transition: "border-color 0.15s",
   } as React.CSSProperties,
@@ -88,7 +88,7 @@ const S = {
     width: "100%",
     height: 40,
     background: "var(--card)",
-    border: "1px solid var(--border)",
+    border: "1px solid #e5e7eb",
     borderRadius: 8,
     padding: "0 12px",
     fontSize: 14,
@@ -281,6 +281,9 @@ export default function NewAgentPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="例: DataAnalyst Pro, SupportBot v2"
                 required
+                style={{ border: `1px solid ${fieldErrors["name"] ? "#ef4444" : "#e5e7eb"}`, borderRadius: 8, outline: "none" }}
+                onFocus={(e) => !fieldErrors["name"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                onBlur={(e) => !fieldErrors["name"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
               />
               {fieldErrors["name"] && (
                 <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
@@ -301,6 +304,9 @@ export default function NewAgentPage() {
                 value={avatarUrl}
                 onChange={(e) => setAvatarUrl(e.target.value)}
                 placeholder="https://example.com/avatar.png"
+                style={{ border: `1px solid ${fieldErrors["avatar_url"] ? "#ef4444" : "#e5e7eb"}`, borderRadius: 8, outline: "none" }}
+                onFocus={(e) => !fieldErrors["avatar_url"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                onBlur={(e) => !fieldErrors["avatar_url"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
               />
               {fieldErrors["avatar_url"] && (
                 <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 4 }}>
@@ -322,6 +328,7 @@ export default function NewAgentPage() {
                 required
                 style={{
                   ...S.numberInput,
+                  borderColor: fieldErrors["category"] ? "#ef4444" : "#e5e7eb",
                   cursor: "pointer",
                   appearance: "none" as const,
                   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
@@ -329,8 +336,8 @@ export default function NewAgentPage() {
                   backgroundPosition: "right 12px center",
                   paddingRight: 32,
                 }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                onFocus={(e) => !fieldErrors["category"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                onBlur={(e) => !fieldErrors["category"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
               >
                 <option value="" disabled>カテゴリを選択してください</option>
                 {AGENT_CATEGORIES.map((cat) => (
@@ -441,7 +448,9 @@ export default function NewAgentPage() {
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={handleSkillKeyDown}
                 placeholder="例: 自然言語処理, データ分析, Python API..."
-                style={{ flex: 1 }}
+                style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: 8, outline: "none" }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "#9ca3af")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
               />
               <Button
                 type="button"
@@ -490,9 +499,9 @@ export default function NewAgentPage() {
                     value={uptime}
                     onChange={(e) => setUptime(e.target.value)}
                     placeholder="99.9"
-                    style={S.numberInput}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                    style={{ ...S.numberInput, borderColor: fieldErrors["track_record.uptime_percentage"] ? "#ef4444" : "#e5e7eb" }}
+                    onFocus={(e) => !fieldErrors["track_record.uptime_percentage"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                    onBlur={(e) => !fieldErrors["track_record.uptime_percentage"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
                   />
                 </div>
                 <p style={S.unit}>%</p>
@@ -516,9 +525,9 @@ export default function NewAgentPage() {
                   value={totalProcessed}
                   onChange={(e) => setTotalProcessed(e.target.value)}
                   placeholder="1000000"
-                  style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                  style={{ ...S.numberInput, borderColor: fieldErrors["track_record.total_processed"] ? "#ef4444" : "#e5e7eb" }}
+                  onFocus={(e) => !fieldErrors["track_record.total_processed"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                  onBlur={(e) => !fieldErrors["track_record.total_processed"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
                 />
                 <p style={S.unit}>件</p>
                 {fieldErrors["track_record.total_processed"] && (
@@ -541,9 +550,9 @@ export default function NewAgentPage() {
                   value={avgResponseMs}
                   onChange={(e) => setAvgResponseMs(e.target.value)}
                   placeholder="320"
-                  style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                  style={{ ...S.numberInput, borderColor: fieldErrors["track_record.avg_response_ms"] ? "#ef4444" : "#e5e7eb" }}
+                  onFocus={(e) => !fieldErrors["track_record.avg_response_ms"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                  onBlur={(e) => !fieldErrors["track_record.avg_response_ms"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
                 />
                 <p style={S.unit}>ms</p>
                 {fieldErrors["track_record.avg_response_ms"] && (
@@ -567,9 +576,9 @@ export default function NewAgentPage() {
                   value={errorRate}
                   onChange={(e) => setErrorRate(e.target.value)}
                   placeholder="0.1"
-                  style={S.numberInput}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--primary)")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                  style={{ ...S.numberInput, borderColor: fieldErrors["track_record.error_rate"] ? "#ef4444" : "#e5e7eb" }}
+                  onFocus={(e) => !fieldErrors["track_record.error_rate"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+                  onBlur={(e) => !fieldErrors["track_record.error_rate"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
                 />
                 <p style={S.unit}>%</p>
                 {fieldErrors["track_record.error_rate"] && (
@@ -649,6 +658,9 @@ export default function NewAgentPage() {
               value={apiEndpoint}
               onChange={(e) => setApiEndpoint(e.target.value)}
               placeholder="https://api.your-agent.com/v1"
+              style={{ border: `1px solid ${fieldErrors["api_endpoint"] ? "#ef4444" : "#e5e7eb"}`, borderRadius: 8, outline: "none" }}
+              onFocus={(e) => !fieldErrors["api_endpoint"] && (e.currentTarget.style.borderColor = "#9ca3af")}
+              onBlur={(e) => !fieldErrors["api_endpoint"] && (e.currentTarget.style.borderColor = "#e5e7eb")}
             />
             {fieldErrors["api_endpoint"] && (
               <p style={{ fontSize: 12, color: "var(--destructive)", marginTop: 6 }}>

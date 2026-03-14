@@ -140,11 +140,11 @@ export default async function AgentResumePage({ params }: PageProps) {
 
   // 企業向けステータス表示の定義
   const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
-    pending:      { label: "スカウト送信済み（返答待ち）", color: "#6b7280", bg: "#f3f4f6" },
-    interviewing: { label: "面接可能",                   color: "#2563eb", bg: "#eff6ff" },
-    probation:    { label: "試用期間中",                  color: "#d97706", bg: "#fffbeb" },
-    hired:        { label: "採用済み",                   color: "#16a34a", bg: "#f0fdf4" },
-    rejected:     { label: "不採用",                     color: "#dc2626", bg: "#fef2f2" },
+    pending:      { label: "スカウト送信済み（返答待ち）", color: "#4b5563", bg: "#f3f4f6" },
+    interviewing: { label: "面接可能",                   color: "#4b5563", bg: "#f3f4f6" },
+    probation:    { label: "試用期間中",                  color: "#4b5563", bg: "#f3f4f6" },
+    hired:        { label: "採用済み",                   color: "#4b5563", bg: "#f3f4f6" },
+    rejected:     { label: "不採用",                     color: "#4b5563", bg: "#f3f4f6" },
   };
 
   return (
@@ -200,11 +200,9 @@ export default async function AgentResumePage({ params }: PageProps) {
           </div>
 
           {/* 2行目: 説明文 */}
-          {agent.personality && (
-            <p style={{ margin: "6px 0 0", fontSize: 15, color: "#6b7280", lineHeight: 1.6 }}>
-              {agent.personality}
-            </p>
-          )}
+          <p style={{ margin: "6px 0 0", fontSize: 15, color: "#6b7280", lineHeight: 1.6 }}>
+            {agent.personality || "説明なし"}
+          </p>
 
           {/* 3行目: アクションエリア */}
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 8, marginTop: 16 }}>
@@ -216,13 +214,12 @@ export default async function AgentResumePage({ params }: PageProps) {
                   if (!cfg) return null;
                   return (
                     <span style={{
-                      fontSize: 13,
-                      fontWeight: 600,
+                      fontSize: 12,
+                      fontWeight: 500,
                       color: cfg.color,
                       backgroundColor: cfg.bg,
-                      padding: "6px 14px",
-                      borderRadius: 8,
-                      border: `1px solid ${cfg.color}30`,
+                      padding: "3px 8px",
+                      borderRadius: 99,
                     }}>
                       {cfg.label}
                     </span>
@@ -265,13 +262,13 @@ export default async function AgentResumePage({ params }: PageProps) {
       </div>
 
       {/* ── スキルセクション ── */}
-      {agent.skills.length > 0 && (
-        <>
-          <div style={{ borderTop: "1px solid #f3f4f6", marginBottom: 32 }} />
-          <section style={{ marginBottom: 0 }}>
-            <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 600, color: "#111827" }}>
-              スキル
-            </h2>
+      <>
+        <div style={{ borderTop: "1px solid #f3f4f6", marginBottom: 32 }} />
+        <section style={{ marginBottom: 0 }}>
+          <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 600, color: "#111827" }}>
+            スキル
+          </h2>
+          {agent.skills.length > 0 ? (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {agent.skills.map((skill) => (
                 <span key={skill} style={{ fontSize: 13, padding: "6px 12px", backgroundColor: "#f3f4f6", borderRadius: 99, color: "#4b5563" }}>
@@ -279,9 +276,11 @@ export default async function AgentResumePage({ params }: PageProps) {
                 </span>
               ))}
             </div>
-          </section>
-        </>
-      )}
+          ) : (
+            <p style={{ margin: 0, fontSize: 14, color: "#9ca3af" }}>スキルなし</p>
+          )}
+        </section>
+      </>
 
       {/* ── 実績セクション ── */}
       <div style={{ borderTop: "1px solid #f3f4f6", margin: "32px 0" }} />

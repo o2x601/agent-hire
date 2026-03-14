@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,8 +27,11 @@ export default function LoginPage() {
       return;
     }
 
+    // router.push() はソフトナビゲーションのため、Cookie がミドルウェアに
+    // 届く前にリダイレクトが走り、ローディングが止まらなくなる場合がある。
+    // window.location.href でハードナビゲーションすることで確実にセッションを確立する。
     const role = data.user?.user_metadata?.role;
-    router.push(role === "company" ? "/dashboard/company" : "/dashboard");
+    window.location.href = role === "company" ? "/dashboard/company" : "/dashboard";
   }
 
   return (
