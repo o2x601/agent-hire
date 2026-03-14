@@ -159,30 +159,52 @@ export default async function AgentResumePage({ params }: PageProps) {
       </Link>
 
       {/* ── ヘッダーセクション ── */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 24, marginBottom: 32 }}>
+      <div style={{ display: "flex", gap: 16, alignItems: "flex-start", marginBottom: 32 }}>
 
-        {/* アバター */}
-        <div style={{
-          width: 72,
-          height: 72,
-          borderRadius: "50%",
-          backgroundColor: "#f3f4f6",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 24,
-          fontWeight: 600,
-          color: "#4b5563",
-          flexShrink: 0,
-          overflow: "hidden",
-        }}>
-          {agent.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : initials}
+        {/* 左カラム: アバター + ステータスバッジ */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {/* アバター */}
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: "50%",
+            backgroundColor: "#f3f4f6",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 24,
+            fontWeight: 600,
+            color: "#4b5563",
+            overflow: "hidden",
+          }}>
+            {agent.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : initials}
+          </div>
+
+          {/* ステータスバッジ（interactionがある企業のみ表示） */}
+          {isCompany && topInteraction && (() => {
+            const cfg = statusConfig[topInteraction.status];
+            if (!cfg) return null;
+            return (
+              <span style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: cfg.color,
+                backgroundColor: cfg.bg,
+                border: cfg.border,
+                padding: "6px 12px",
+                borderRadius: 6,
+                whiteSpace: "nowrap",
+              }}>
+                {cfg.label}
+              </span>
+            );
+          })()}
         </div>
 
-        {/* 右: 名前・説明・ボタン */}
+        {/* 右カラム: 名前・料金タイプ・説明・ボタン */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* 1行目: 名前 + 料金タイプバッジ */}
           <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
@@ -205,31 +227,12 @@ export default async function AgentResumePage({ params }: PageProps) {
           </p>
 
           {/* 3行目: アクションエリア */}
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 8, marginTop: 16 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 12 }}>
             {isCompany && topInteraction ? (
-              // interaction がある場合: ステータスバッジ + 面接ボタン
-              <>
-                {(() => {
-                  const cfg = statusConfig[topInteraction.status];
-                  if (!cfg) return null;
-                  return (
-                    <span style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      color: cfg.color,
-                      backgroundColor: cfg.bg,
-                      border: cfg.border,
-                      padding: "6px 12px",
-                      borderRadius: 6,
-                    }}>
-                      {cfg.label}
-                    </span>
-                  );
-                })()}
-                {interviewingInteraction && (
-                  <InterviewButton interactionId={interviewingInteraction.id} />
-                )}
-              </>
+              // interaction がある場合: 面接ボタン（バッジは左カラムに移動済み）
+              interviewingInteraction && (
+                <InterviewButton interactionId={interviewingInteraction.id} />
+              )
             ) : (
               // interaction なし: スカウトボタン
               isCompany && companyJobs.length > 0 && (
