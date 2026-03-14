@@ -161,9 +161,8 @@ export default async function AgentResumePage({ params }: PageProps) {
       {/* ── ヘッダーセクション ── */}
       <div style={{ display: "flex", gap: 16, alignItems: "flex-start", marginBottom: 32 }}>
 
-        {/* 左カラム: アバター + ステータスバッジ */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          {/* アバター */}
+        {/* 左カラム: アバター */}
+        <div style={{ flexShrink: 0 }}>
           <div style={{
             width: 72,
             height: 72,
@@ -182,26 +181,6 @@ export default async function AgentResumePage({ params }: PageProps) {
               <img src={agent.avatar_url} alt={agent.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : initials}
           </div>
-
-          {/* ステータスバッジ（interactionがある企業のみ表示） */}
-          {isCompany && topInteraction && (() => {
-            const cfg = statusConfig[topInteraction.status];
-            if (!cfg) return null;
-            return (
-              <span style={{
-                fontSize: 13,
-                fontWeight: 500,
-                color: cfg.color,
-                backgroundColor: cfg.bg,
-                border: cfg.border,
-                padding: "6px 12px",
-                borderRadius: 6,
-                whiteSpace: "nowrap",
-              }}>
-                {cfg.label}
-              </span>
-            );
-          })()}
         </div>
 
         {/* 右カラム: 名前・料金タイプ・説明・ボタン */}
@@ -226,13 +205,33 @@ export default async function AgentResumePage({ params }: PageProps) {
             {agent.personality || "説明なし"}
           </p>
 
-          {/* 3行目: アクションエリア */}
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 12 }}>
+          {/* 3行目: アクションエリア（バッジ＋ボタンの下辺を揃える） */}
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, marginTop: 12 }}>
             {isCompany && topInteraction ? (
-              // interaction がある場合: 面接ボタン（バッジは左カラムに移動済み）
-              interviewingInteraction && (
-                <InterviewButton interactionId={interviewingInteraction.id} />
-              )
+              // interaction がある場合: ステータスバッジ + 面接ボタン
+              <>
+                {(() => {
+                  const cfg = statusConfig[topInteraction.status];
+                  if (!cfg) return null;
+                  return (
+                    <span style={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: cfg.color,
+                      backgroundColor: cfg.bg,
+                      border: cfg.border,
+                      padding: "6px 12px",
+                      borderRadius: 6,
+                      whiteSpace: "nowrap",
+                    }}>
+                      {cfg.label}
+                    </span>
+                  );
+                })()}
+                {interviewingInteraction && (
+                  <InterviewButton interactionId={interviewingInteraction.id} />
+                )}
+              </>
             ) : (
               // interaction なし: スカウトボタン
               isCompany && companyJobs.length > 0 && (
