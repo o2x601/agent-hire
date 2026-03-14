@@ -9,6 +9,22 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+type CompanyInteraction = {
+  id: string;
+  job_id: string;
+  status: string;
+  type: string;
+};
+
+// ステータスの優先度（高いほど「進んでいる」）
+const STATUS_PRIORITY: Record<string, number> = {
+  hired: 5,
+  probation: 4,
+  interviewing: 3,
+  pending: 2,
+  rejected: 1,
+};
+
 export default async function AgentResumePage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
@@ -34,6 +50,7 @@ export default async function AgentResumePage({ params }: PageProps) {
 
   let companyJobs: { id: string; title: string }[] = [];
   let scoutedJobIds = new Set<string>();
+  let companyInteractions: CompanyInteraction[] = [];
 
   if (isCompany && user) {
     const { data: company } = await supabase
@@ -43,23 +60,47 @@ export default async function AgentResumePage({ params }: PageProps) {
       .maybeSingle();
 
     if (company) {
-      const [{ data: jobsData }, { data: scoutsData }] = await Promise.all([
-        supabase
-          .from("jobs")
-          .select("id, title")
-          .eq("company_id", company.id)
-          .eq("status", "open")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("interactions")
-          .select("job_id")
-          .eq("agent_id", id)
-          .eq("type", "scout"),
-      ]);
+      const { data: jobsData } = await supabase
+        .from("jobs")
+        .select("id, title")
+        .eq("company_id", company.id)
+        .eq("status", "open")
+        .order("created_at", { ascending: false });
+
       companyJobs = jobsData ?? [];
-      scoutedJobIds = new Set((scoutsData ?? []).map((s) => s.job_id));
+      const jobIds = companyJobs.map((j) => j.id);
+
+      if (jobIds.length > 0) {
+        const { data: iData } = await supabase
+          .from("interactions")
+          .select("id, job_id, status, type")
+          .eq("agent_id", id)
+          .in("job_id", jobIds)
+          .order("created_at", { ascending: false });
+
+        companyInteractions = (iData ?? []) as CompanyInteraction[];
+        scoutedJobIds = new Set(
+          companyInteractions
+            .filter((i) => i.type === "scout")
+            .map((i) => i.job_id),
+        );
+      }
     }
   }
+
+  // 最も「進んでいる」interactionを選ぶ
+  const topInteraction = companyInteractions.reduce<CompanyInteraction | null>(
+    (best, curr) =>
+      (STATUS_PRIORITY[curr.status] ?? 0) > (STATUS_PRIORITY[best?.status ?? ""] ?? 0)
+        ? curr
+        : best,
+    null,
+  );
+
+  // interviewing の interaction があれば面接ボタンを出す
+  const interviewingInteraction = companyInteractions.find(
+    (i) => i.status === "interviewing",
+  );
 
   const tr = agent.track_record;
   const stats = [
@@ -96,6 +137,15 @@ export default async function AgentResumePage({ params }: PageProps) {
         : "#9ca3af",
     },
   ];
+
+  // 企業向けステータス表示の定義
+  const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+    pending:      { label: "スカウト送信済み（返答待ち）", color: "#6b7280", bg: "#f3f4f6" },
+    interviewing: { label: "面接可能",                   color: "#2563eb", bg: "#eff6ff" },
+    probation:    { label: "試用期間中",                  color: "#d97706", bg: "#fffbeb" },
+    hired:        { label: "採用済み",                   color: "#16a34a", bg: "#f0fdf4" },
+    rejected:     { label: "不採用",                     color: "#dc2626", bg: "#fef2f2" },
+  };
 
   return (
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: 32, fontFamily: "'Inter', -apple-system, sans-serif" }}>
@@ -156,21 +206,42 @@ export default async function AgentResumePage({ params }: PageProps) {
             </p>
           )}
 
-          {/* 3行目: アクションボタン */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
-            {isCompany && companyJobs.length > 0 && (
-              <ScoutButton
-                agentId={agent.id}
-                agentName={agent.name}
-                companyJobs={companyJobs}
-                scoutedJobIds={scoutedJobIds}
-              />
-            )}
-            {isCompany && agent.api_endpoint && (
-              <InterviewButton
-                agentId={agent.id}
-                jobId={companyJobs[0]?.id}
-              />
+          {/* 3行目: アクションエリア */}
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 8, marginTop: 16 }}>
+            {isCompany && topInteraction ? (
+              // interaction がある場合: ステータスバッジ + 面接ボタン
+              <>
+                {(() => {
+                  const cfg = statusConfig[topInteraction.status];
+                  if (!cfg) return null;
+                  return (
+                    <span style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: cfg.color,
+                      backgroundColor: cfg.bg,
+                      padding: "6px 14px",
+                      borderRadius: 8,
+                      border: `1px solid ${cfg.color}30`,
+                    }}>
+                      {cfg.label}
+                    </span>
+                  );
+                })()}
+                {interviewingInteraction && (
+                  <InterviewButton interactionId={interviewingInteraction.id} />
+                )}
+              </>
+            ) : (
+              // interaction なし: スカウトボタン
+              isCompany && companyJobs.length > 0 && (
+                <ScoutButton
+                  agentId={agent.id}
+                  agentName={agent.name}
+                  companyJobs={companyJobs}
+                  scoutedJobIds={scoutedJobIds}
+                />
+              )
             )}
             {isOwner && (
               <Link

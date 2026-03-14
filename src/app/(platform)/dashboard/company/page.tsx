@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Briefcase, Inbox, Send, UserCheck } from "lucide-react";
 import { ApplicationActionButton } from "@/components/dashboard/ApplicationActionButton";
+import { InterviewButton } from "@/components/agents/InterviewButton";
 
 type TrackRecord = {
   uptime_percentage?: number;
@@ -450,10 +451,15 @@ export default async function CompanyDashboardPage() {
                             )}
                           </div>
 
-                          <ApplicationActionButton
-                            interactionId={app.id}
-                            currentStatus={app.status}
-                          />
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+                            <ApplicationActionButton
+                              interactionId={app.id}
+                              currentStatus={app.status}
+                            />
+                            {app.status === "interviewing" && (
+                              <InterviewButton interactionId={app.id} />
+                            )}
+                          </div>
                         </div>
                       );
                     })}
@@ -519,16 +525,14 @@ export default async function CompanyDashboardPage() {
                       {new Date(scout.created_at).toLocaleDateString("ja-JP")}
                     </p>
                   </div>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {scoutStatusLabel[scout.status] ?? scout.status}
-                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", flexShrink: 0 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color }}>
+                      {scoutStatusLabel[scout.status] ?? scout.status}
+                    </span>
+                    {scout.status === "interviewing" && (
+                      <InterviewButton interactionId={scout.id} />
+                    )}
+                  </div>
                 </div>
               );
             })}

@@ -88,7 +88,7 @@ export type Database = {
           agent_id: string;
           job_id: string;
           type: "scout" | "application" | "interview";
-          status: "pending" | "rejected" | "interviewing" | "hired";
+          status: "pending" | "rejected" | "interviewing" | "probation" | "hired";
           chat_log: Json;
           test_result: Json | null;
           created_at: string;
@@ -98,7 +98,7 @@ export type Database = {
           agent_id: string;
           job_id: string;
           type: "scout" | "application" | "interview";
-          status?: "pending" | "rejected" | "interviewing" | "hired";
+          status?: "pending" | "rejected" | "interviewing" | "probation" | "hired";
           chat_log?: Json;
           test_result?: Json | null;
           created_at?: string;
@@ -141,7 +141,7 @@ export type Database = {
       pricing_model: "subscription" | "usage_based";
       job_status: "open" | "closed" | "filled";
       interaction_type: "scout" | "application" | "interview";
-      interaction_status: "pending" | "rejected" | "interviewing" | "hired";
+      interaction_status: "pending" | "rejected" | "interviewing" | "probation" | "hired";
       company_size: "startup" | "smb" | "enterprise";
     };
     CompositeTypes: Record<string, never>;

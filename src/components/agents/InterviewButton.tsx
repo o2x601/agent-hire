@@ -4,11 +4,10 @@ import { useState, useTransition } from "react";
 import { runInterview, type InterviewResult } from "@/app/actions/interview";
 
 type Props = {
-  agentId: string;
-  jobId?: string;
+  interactionId: string;
 };
 
-export function InterviewButton({ agentId, jobId }: Props) {
+export function InterviewButton({ interactionId }: Props) {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<InterviewResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +16,7 @@ export function InterviewButton({ agentId, jobId }: Props) {
     setResult(null);
     setError(null);
     startTransition(async () => {
-      const res = await runInterview(agentId, jobId);
+      const res = await runInterview(interactionId);
       if (res.error) {
         setError(res.error);
       } else if (res.data) {
@@ -26,24 +25,12 @@ export function InterviewButton({ agentId, jobId }: Props) {
     });
   }
 
-  const resultLabel =
-    result?.result === "passed"
-      ? "合格"
-      : result?.result === "timeout"
-      ? "タイムアウト"
-      : result?.result === "failed"
-      ? "不合格"
-      : null;
-
-  const resultColor =
-    result?.result === "passed"
-      ? "#16a34a"
-      : result?.result === "timeout"
-      ? "#d97706"
-      : "#dc2626";
+  const passed = result?.result === "passed";
+  const resultColor = passed ? "#16a34a" : result ? "#d97706" : undefined;
+  const resultLabel = passed ? "試用期間開始" : result ? "再面接可能" : null;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <button
         type="button"
         onClick={handleClick}
@@ -67,22 +54,21 @@ export function InterviewButton({ agentId, jobId }: Props) {
         <p style={{ fontSize: 12, color: "#dc2626", margin: 0 }}>{error}</p>
       )}
 
-      {result && (
+      {result && resultColor && (
         <div
           style={{
             fontSize: 12,
             color: resultColor,
             fontWeight: 500,
-            margin: 0,
             padding: "4px 10px",
-            backgroundColor: `${resultColor}14`,
+            backgroundColor: `${resultColor}18`,
             border: `1px solid ${resultColor}40`,
             borderRadius: 6,
           }}
         >
-          応答速度 {result.response_time_ms}ms
+          {result.response_time_ms}ms
           {result.status_code && ` · HTTP ${result.status_code}`}
-          {` · `}
+          {" · "}
           <span style={{ fontWeight: 700 }}>{resultLabel}</span>
         </div>
       )}

@@ -12,8 +12,7 @@ export type InterviewResult = {
 };
 
 export async function runInterview(
-  agentId: string,
-  jobId?: string,
+  interactionId: string,
 ): Promise<{ data?: InterviewResult; error?: string }> {
   const supabase = await createClient();
 
@@ -27,23 +26,50 @@ export async function runInterview(
   const role = user.user_metadata?.role as string | undefined;
   if (role !== "company") return { error: "企業アカウントのみ面接を実行できます" };
 
-  // エージェントの api_endpoint を取得
-  const { data: agent, error: agentError } = await supabase
-    .from("ai_agents")
-    .select("id, api_endpoint")
-    .eq("id", agentId)
+  // interaction と対象エージェントを取得
+  const { data: interaction, error: intError } = await supabase
+    .from("interactions")
+    .select("id, agent_id, job_id, status")
+    .eq("id", interactionId)
     .single();
 
-  if (agentError || !agent) return { error: "エージェントが見つかりません" };
+  if (intError || !interaction) return { error: "インタラクションが見つかりません" };
+  if (interaction.status !== "interviewing") {
+    return { error: "面接可能なステータスではありません（interviewing が必要です）" };
+  }
 
-  if (!agent.api_endpoint) {
+  // この job が自社のものか確認
+  const { data: company } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!company) return { error: "企業プロフィールが見つかりません" };
+
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id")
+    .eq("id", interaction.job_id)
+    .eq("company_id", company.id)
+    .maybeSingle();
+
+  if (!job) return { error: "この求人に対する権限がありません" };
+
+  // エージェントの api_endpoint を取得
+  const { data: agent } = await supabase
+    .from("ai_agents")
+    .select("id, api_endpoint")
+    .eq("id", interaction.agent_id)
+    .single();
+
+  if (!agent?.api_endpoint) {
     return { error: "このエージェントはAPIエンドポイントを登録していません" };
   }
 
   // Health Check 実行
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 5000);
-
   const tested_at = new Date().toISOString();
   let interviewResult: InterviewResult;
 
@@ -57,14 +83,15 @@ export async function runInterview(
     clearTimeout(timeoutId);
 
     const status_code = response.status;
-    const result = status_code === 200 ? "passed" : "failed";
-
-    interviewResult = { result, status_code, response_time_ms, tested_at };
+    interviewResult = {
+      result: status_code === 200 ? "passed" : "failed",
+      status_code,
+      response_time_ms,
+      tested_at,
+    };
   } catch (err) {
     clearTimeout(timeoutId);
-    const isTimeout =
-      err instanceof Error && err.name === "AbortError";
-
+    const isTimeout = err instanceof Error && err.name === "AbortError";
     interviewResult = {
       result: "timeout",
       status_code: null,
@@ -76,47 +103,28 @@ export async function runInterview(
 
   const { result, status_code, response_time_ms } = interviewResult;
 
-  // health_check_status マッピング
-  const healthStatus =
-    result === "passed"
-      ? "healthy"
-      : result === "failed"
-      ? "degraded"
-      : "unreachable";
+  // interaction を更新
+  // passed → status = 'probation'、failed/timeout → 'interviewing' のまま
+  const newStatus = result === "passed" ? "probation" : "interviewing";
+
+  await supabase
+    .from("interactions")
+    .update({
+      status: newStatus as any,
+      test_result: { status_code, response_time_ms, tested_at, result },
+    })
+    .eq("id", interactionId);
 
   // ai_agents の health check ステータスを更新
-  // 成功時のみ last_health_check を更新（3日連続未到達の判定に使用）
-  const agentUpdate: Record<string, unknown> = {
-    health_check_status: healthStatus,
-  };
-  if (result === "passed") {
-    agentUpdate.last_health_check = tested_at;
-  }
+  const healthStatus =
+    result === "passed" ? "healthy" : result === "failed" ? "degraded" : "unreachable";
 
-  await (supabase.from("ai_agents") as any)
-    .update(agentUpdate)
-    .eq("id", agentId);
+  const agentUpdate: Record<string, unknown> = { health_check_status: healthStatus };
+  if (result === "passed") agentUpdate.last_health_check = tested_at;
 
-  // interactions に記録（jobId が指定されている場合のみ）
-  if (jobId) {
-    const interactionStatus =
-      result === "passed" ? "interviewing" : "rejected";
+  await (supabase.from("ai_agents") as any).update(agentUpdate).eq("id", agent.id);
 
-    await supabase.from("interactions").insert({
-      agent_id: agentId,
-      job_id: jobId,
-      type: "interview",
-      status: interactionStatus,
-      test_result: {
-        status_code,
-        response_time_ms,
-        tested_at,
-        result,
-      },
-    });
-  }
-
-  revalidatePath(`/agents/${agentId}`);
+  revalidatePath(`/agents/${agent.id}`);
   revalidatePath("/dashboard/company");
 
   return { data: interviewResult };
